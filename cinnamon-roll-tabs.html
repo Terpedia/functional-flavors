@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinnamon Roll - Functional Flavors | Terpedia</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="coa-styles.css">
+    <style>
+        /* Tab Styles */
+        .tabs-container {
+            margin: 2rem 0;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab-button:hover {
+            color: var(--primary-color);
+            background-color: var(--bg-light);
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Ensure CoA styles work within tabs */
+        .tab-content .coa-document {
+            margin: 0;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Terpedia</h1>
+            <p class="subtitle">Scientific Repository for Functional Flavors Research</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="cinnamon-roll-tabs.html">Cinnamon Roll</a></li>
+                <li><a href="compounds.html">All Compounds</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <article>
+            <h2>Functional Flavors in Cinnamon Roll</h2>
+            
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-button active" onclick="showTab('overview')">Overview</button>
+                    <button class="tab-button" onclick="showTab('coa')">GCMS CoA</button>
+                    <button class="tab-button" onclick="showTab('ingredients')">Ingredients</button>
+                    <button class="tab-button" onclick="showTab('compounds')">Compounds</button>
+                </div>
+
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <section class="intro">
+                        <p>
+                            A cinnamon roll is a complex matrix of flavor compounds, each contributing to both the sensory 
+                            experience and potential functional effects. This analysis examines the key bioactive compounds 
+                            present in cinnamon rolls and their documented effects on human physiology.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h3>Primary Flavor Compounds</h3>
+                        
+                        <div class="compound-grid">
+                            <div class="compound-card">
+                                <h4><a href="compounds/cinnamaldehyde.html">Cinnamaldehyde</a></h4>
+                                <p class="compound-formula">C₉H₈O</p>
+                                <p class="compound-source">Primary compound in cinnamon</p>
+                                <p class="compound-description">
+                                    The dominant flavor compound in cinnamon, responsible for the characteristic warm, 
+                                    sweet-spicy aroma. Comprises 60-90% of cinnamon essential oil.
+                                </p>
+                                <a href="compounds/cinnamaldehyde.html" class="learn-more">Learn about function in humans →</a>
+                            </div>
+
+                            <div class="compound-card">
+                                <h4><a href="compounds/eugenol.html">Eugenol</a></h4>
+                                <p class="compound-formula">C₁₀H₁₂O₂</p>
+                                <p class="compound-source">Present in cinnamon and cloves</p>
+                                <p class="compound-description">
+                                    A phenolic compound contributing spicy, clove-like notes. Found in smaller quantities 
+                                    but significant for overall flavor complexity.
+                                </p>
+                                <a href="compounds/eugenol.html" class="learn-more">Learn about function in humans →</a>
+                            </div>
+
+                            <div class="compound-card">
+                                <h4><a href="compounds/linalool.html">Linalool</a></h4>
+                                <p class="compound-formula">C₁₀H₁₈O</p>
+                                <p class="compound-source">Terpene in cinnamon and vanilla</p>
+                                <p class="compound-description">
+                                    A monoterpene alcohol providing floral, citrus-like notes. Contributes to the 
+                                    aromatic complexity of the cinnamon roll.
+                                </p>
+                                <a href="compounds/linalool.html" class="learn-more">Learn about function in humans →</a>
+                            </div>
+
+                            <div class="compound-card">
+                                <h4><a href="compounds/vanillin.html">Vanillin</a></h4>
+                                <p class="compound-formula">C₈H₈O₃</p>
+                                <p class="compound-source">Vanilla extract (if used)</p>
+                                <p class="compound-description">
+                                    The primary flavor compound in vanilla, contributing sweet, creamy notes that 
+                                    complement the cinnamon profile.
+                                </p>
+                                <a href="compounds/vanillin.html" class="learn-more">Learn about function in humans →</a>
+                            </div>
+
+                            <div class="compound-card">
+                                <h4><a href="compounds/coumarin.html">Coumarin</a></h4>
+                                <p class="compound-formula">C₉H₆O₂</p>
+                                <p class="compound-source">Naturally occurring in cinnamon</p>
+                                <p class="compound-description">
+                                    A benzopyrone compound with a sweet, hay-like aroma. Present in trace amounts 
+                                    in certain cinnamon varieties.
+                                </p>
+                                <a href="compounds/coumarin.html" class="learn-more">Learn about function in humans →</a>
+                            </div>
+
+                            <div class="compound-card">
+                                <h4><a href="compounds/cinnamyl-acetate.html">Cinnamyl Acetate</a></h4>
+                                <p class="compound-formula">C₁₁H₁₂O₂</p>
+                                <p class="compound-source">Ester in cinnamon oil</p>
+                                <p class="compound-description">
+                                    An ester derivative of cinnamaldehyde, contributing fruity, balsamic notes 
+                                    to the overall flavor profile.
+                                </p>
+                                <a href="compounds/cinnamyl-acetate.html" class="learn-more">Learn about function in humans →</a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3>Synergistic Effects</h3>
+                        <p>
+                            The functional effects of these compounds are not merely additive. Research suggests that 
+                            the combination of cinnamaldehyde, eugenol, and other compounds may create synergistic 
+                            effects, particularly in:
+                        </p>
+                        <ul>
+                            <li><strong>Glucose Metabolism:</strong> Multiple compounds may work together to enhance insulin sensitivity</li>
+                            <li><strong>Antioxidant Activity:</strong> Different compounds may target different types of free radicals</li>
+                            <li><strong>Anti-inflammatory Effects:</strong> Combined action on multiple inflammatory pathways</li>
+                            <li><strong>Sensory Integration:</strong> The combination creates a more complex and pleasurable flavor experience</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h3>Concentration and Bioavailability</h3>
+                        <p>
+                            The actual concentration of these compounds in a cinnamon roll depends on several factors:
+                        </p>
+                        <ul>
+                            <li>Type and quality of cinnamon used (Ceylon vs. Cassia)</li>
+                            <li>Amount of cinnamon in the recipe</li>
+                            <li>Processing and baking temperatures</li>
+                            <li>Presence of other ingredients (fats, proteins) that may affect absorption</li>
+                        </ul>
+                        <p>
+                            While the concentrations in a single cinnamon roll may be relatively low, regular consumption 
+                            of foods containing these functional flavors may contribute to cumulative health effects.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h3>Research Implications</h3>
+                        <p>
+                            Understanding the functional flavors in cinnamon rolls provides insights into:
+                        </p>
+                        <ul>
+                            <li>How natural foods can provide bioactive compounds beyond basic nutrition</li>
+                            <li>The importance of food matrix effects on compound bioavailability</li>
+                            <li>Potential for functional food development</li>
+                            <li>The relationship between sensory pleasure and physiological function</li>
+                        </ul>
+                    </section>
+                </div>
+
+                <!-- GCMS CoA Tab -->
+                <div id="coa" class="tab-content">
+                    <div class="coa-document">
+                        <!-- CoA Header -->
+                        <div class="coa-header">
+                            <div class="coa-logo">
+                                <h2>TERPEDIA</h2>
+                                <p>Analytical Laboratory</p>
+                            </div>
+                            <div class="coa-title">
+                                <h1>CERTIFICATE OF ANALYSIS</h1>
+                                <p class="coa-subtitle">Gas Chromatography-Mass Spectrometry (GCMS)</p>
+                            </div>
+                        </div>
+
+                        <!-- Certificate Information -->
+                        <div class="coa-info">
+                            <table class="info-table">
+                                <tr>
+                                    <td><strong>Certificate No.:</strong></td>
+                                    <td>TP-2024-001</td>
+                                    <td><strong>Date:</strong></td>
+                                    <td id="current-date"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sample Name:</strong></td>
+                                    <td>Cinnamon Roll Flavor Profile</td>
+                                    <td><strong>Sample Type:</strong></td>
+                                    <td>Food Product</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Method:</strong></td>
+                                    <td>GCMS-QP2020</td>
+                                    <td><strong>Column:</strong></td>
+                                    <td>DB-5MS (30m × 0.25mm × 0.25μm)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Injection Temp:</strong></td>
+                                    <td>250°C</td>
+                                    <td><strong>Detector:</strong></td>
+                                    <td>Mass Spectrometer</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Carrier Gas:</strong></td>
+                                    <td>Helium</td>
+                                    <td><strong>Flow Rate:</strong></td>
+                                    <td>1.0 mL/min</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Sample Description -->
+                        <div class="coa-sample-desc">
+                            <h3>Sample Description</h3>
+                            <p>
+                                Analysis of volatile flavor compounds extracted from cinnamon roll using headspace solid-phase 
+                                microextraction (HS-SPME) followed by gas chromatography-mass spectrometry. Compounds identified 
+                                through comparison with NIST mass spectral library and retention time matching with authentic standards.
+                            </p>
+                        </div>
+
+                        <!-- Results Table -->
+                        <div class="coa-results">
+                            <h3>Identified Compounds</h3>
+                            <table class="coa-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Compound Name</th>
+                                        <th>CAS Number</th>
+                                        <th>RT (min)</th>
+                                        <th>Area %</th>
+                                        <th>Concentration (μg/g)</th>
+                                        <th>Match Quality</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><strong>Cinnamaldehyde</strong></td>
+                                        <td>104-55-2</td>
+                                        <td>12.45</td>
+                                        <td>68.5</td>
+                                        <td>245.3</td>
+                                        <td>98.2%</td>
+                                        <td><a href="compounds/cinnamaldehyde.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td><strong>Eugenol</strong></td>
+                                        <td>97-53-0</td>
+                                        <td>15.23</td>
+                                        <td>8.2</td>
+                                        <td>29.4</td>
+                                        <td>96.8%</td>
+                                        <td><a href="compounds/eugenol.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td><strong>Linalool</strong></td>
+                                        <td>78-70-6</td>
+                                        <td>9.87</td>
+                                        <td>5.8</td>
+                                        <td>20.8</td>
+                                        <td>97.5%</td>
+                                        <td><a href="compounds/linalool.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td><strong>Vanillin</strong></td>
+                                        <td>121-33-5</td>
+                                        <td>13.92</td>
+                                        <td>4.5</td>
+                                        <td>16.1</td>
+                                        <td>99.1%</td>
+                                        <td><a href="compounds/vanillin.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td><strong>Cinnamyl Acetate</strong></td>
+                                        <td>103-54-8</td>
+                                        <td>14.67</td>
+                                        <td>3.2</td>
+                                        <td>11.5</td>
+                                        <td>95.3%</td>
+                                        <td><a href="compounds/cinnamyl-acetate.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td><strong>Coumarin</strong></td>
+                                        <td>91-64-5</td>
+                                        <td>16.34</td>
+                                        <td>2.1</td>
+                                        <td>7.5</td>
+                                        <td>94.7%</td>
+                                        <td><a href="compounds/coumarin.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td><strong>Limonene</strong></td>
+                                        <td>138-86-3</td>
+                                        <td>6.12</td>
+                                        <td>1.2</td>
+                                        <td>4.3</td>
+                                        <td>94.2%</td>
+                                        <td><a href="compounds/limonene.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td><strong>Pinene (α)</strong></td>
+                                        <td>80-56-8</td>
+                                        <td>5.89</td>
+                                        <td>0.9</td>
+                                        <td>3.2</td>
+                                        <td>92.8%</td>
+                                        <td><a href="compounds/pinene.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>9</td>
+                                        <td><strong>Myrcene</strong></td>
+                                        <td>123-35-3</td>
+                                        <td>6.23</td>
+                                        <td>0.7</td>
+                                        <td>2.5</td>
+                                        <td>91.3%</td>
+                                        <td><a href="compounds/myrcene.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>10</td>
+                                        <td><strong>Thymol</strong></td>
+                                        <td>89-83-8</td>
+                                        <td>16.89</td>
+                                        <td>0.6</td>
+                                        <td>2.1</td>
+                                        <td>93.7%</td>
+                                        <td><a href="compounds/thymol.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>11</td>
+                                        <td><strong>Carvacrol</strong></td>
+                                        <td>499-75-2</td>
+                                        <td>17.12</td>
+                                        <td>0.5</td>
+                                        <td>1.8</td>
+                                        <td>92.4%</td>
+                                        <td><a href="compounds/carvacrol.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>12</td>
+                                        <td><strong>Menthol</strong></td>
+                                        <td>89-78-1</td>
+                                        <td>11.45</td>
+                                        <td>0.4</td>
+                                        <td>1.4</td>
+                                        <td>90.9%</td>
+                                        <td><a href="compounds/menthol.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>13</td>
+                                        <td><strong>Anethole</strong></td>
+                                        <td>104-46-1</td>
+                                        <td>15.78</td>
+                                        <td>0.3</td>
+                                        <td>1.1</td>
+                                        <td>89.6%</td>
+                                        <td><a href="compounds/anethole.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>14</td>
+                                        <td><strong>Camphor</strong></td>
+                                        <td>76-22-2</td>
+                                        <td>13.23</td>
+                                        <td>0.2</td>
+                                        <td>0.7</td>
+                                        <td>88.3%</td>
+                                        <td><a href="compounds/camphor.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>15</td>
+                                        <td><strong>Benzaldehyde</strong></td>
+                                        <td>100-52-7</td>
+                                        <td>7.23</td>
+                                        <td>1.8</td>
+                                        <td>6.4</td>
+                                        <td>92.1%</td>
+                                        <td><a href="compounds/benzaldehyde.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>16</td>
+                                        <td>Safrole</td>
+                                        <td>94-59-7</td>
+                                        <td>17.89</td>
+                                        <td>0.1</td>
+                                        <td>0.4</td>
+                                        <td>87.2%</td>
+                                        <td><a href="compounds/safrole.html" class="coa-link">View →</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>17</td>
+                                        <td>β-Caryophyllene</td>
+                                        <td>87-44-5</td>
+                                        <td>18.56</td>
+                                        <td>0.8</td>
+                                        <td>2.9</td>
+                                        <td>90.5%</td>
+                                        <td>—</td>
+                                    </tr>
+                                    <tr class="total-row">
+                                        <td colspan="4"><strong>Total Identified</strong></td>
+                                        <td><strong>99.2%</strong></td>
+                                        <td><strong>375.1</strong></td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Notes Section -->
+                        <div class="coa-notes">
+                            <h3>Notes</h3>
+                            <ul>
+                                <li>Analysis performed in accordance with standard GCMS protocols</li>
+                                <li>Compounds identified by mass spectral library matching (NIST 2020) and retention time comparison</li>
+                                <li>Concentrations calculated using internal standard method (naphthalene-d8)</li>
+                                <li>Area % represents relative abundance in the total ion chromatogram</li>
+                                <li>Match Quality indicates similarity score to reference spectrum (0-100%)</li>
+                                <li>Click "View →" links to access detailed functional information for each compound</li>
+                            </ul>
+                        </div>
+
+                        <!-- Signature Section -->
+                        <div class="coa-signature">
+                            <table class="signature-table">
+                                <tr>
+                                    <td class="signature-cell">
+                                        <div class="signature-line"></div>
+                                        <p><strong>Analyst</strong></p>
+                                        <p>Dr. [Analyst Name]</p>
+                                        <p>Senior Analytical Chemist</p>
+                                    </td>
+                                    <td class="signature-cell">
+                                        <div class="signature-line"></div>
+                                        <p><strong>Approved By</strong></p>
+                                        <p>Dr. [Supervisor Name]</p>
+                                        <p>Laboratory Director</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="coa-footer">
+                            <p><strong>Terpedia Analytical Laboratory</strong></p>
+                            <p>This certificate relates only to the sample tested. Results are based on the sample as received.</p>
+                            <p>For questions regarding this analysis, please contact: <a href="https://github.com/terpedia">github.com/terpedia</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingredients Tab -->
+                <div id="ingredients" class="tab-content">
+                    <section class="intro">
+                        <p>
+                            This page provides a comprehensive ingredients list for the cinnamon roll product, identifying 
+                            which natural ingredients contain specific functional flavor compounds. Understanding the 
+                            relationship between ingredients and their bioactive compounds helps illustrate how natural 
+                            foods deliver functional benefits through their complex chemical composition.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h3>Ingredients List</h3>
+                        <p class="ingredients-note">
+                            <strong>Product:</strong> Cinnamon Roll<br>
+                            <strong>Ingredients are listed in order of predominance by weight:</strong>
+                        </p>
+
+                        <div class="ingredients-list">
+                            <div class="ingredient-item">
+                                <h4>1. Wheat Flour</h4>
+                                <p class="ingredient-type">Base Ingredient</p>
+                                <p class="ingredient-description">
+                                    Provides the structural foundation of the cinnamon roll. While primarily a source of 
+                                    carbohydrates and protein, wheat flour may contain trace amounts of volatile compounds 
+                                    from the grain itself.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds:</strong> None significant
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item">
+                                <h4>2. Cinnamon (<em>Cinnamomum verum</em> or <em>C. cassia</em>)</h4>
+                                <p class="ingredient-type">Spice - Primary Flavor Source</p>
+                                <p class="ingredient-description">
+                                    The primary source of functional flavor compounds in cinnamon rolls. Cinnamon contains 
+                                    over 50 identified volatile compounds, with cinnamaldehyde being the dominant component. 
+                                    The specific composition varies between Ceylon cinnamon (<em>C. verum</em>) and Cassia 
+                                    cinnamon (<em>C. cassia</em>), with Cassia containing higher levels of coumarin.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds Present:</strong>
+                                    <ul>
+                                        <li><a href="compounds/cinnamaldehyde.html">Cinnamaldehyde</a> - 60-90% of essential oil (primary compound)</li>
+                                        <li><a href="compounds/eugenol.html">Eugenol</a> - 5-10% of essential oil</li>
+                                        <li><a href="compounds/linalool.html">Linalool</a> - 2-5% of essential oil</li>
+                                        <li><a href="compounds/cinnamyl-acetate.html">Cinnamyl Acetate</a> - 1-5% of essential oil</li>
+                                        <li><a href="compounds/coumarin.html">Coumarin</a> - Trace to 0.4% (higher in Cassia)</li>
+                                        <li><a href="compounds/camphor.html">Camphor</a> - Trace amounts (some varieties)</li>
+                                        <li><a href="compounds/safrole.html">Safrole</a> - Trace amounts (some varieties)</li>
+                                        <li><a href="compounds/benzaldehyde.html">Benzaldehyde</a> - Minor component</li>
+                                        <li>β-Caryophyllene - Minor component</li>
+                                        <li>α-Pinene - Minor component</li>
+                                        <li>And 40+ other minor volatile compounds</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item">
+                                <h4>3. Sugar (Sucrose)</h4>
+                                <p class="ingredient-type">Sweetener</p>
+                                <p class="ingredient-description">
+                                    Provides sweetness and contributes to browning reactions (Maillard reaction) during 
+                                    baking, which can produce additional flavor compounds.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds:</strong> None significant (though Maillard reaction products may have antioxidant activity)
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item">
+                                <h4>4. Butter or Margarine</h4>
+                                <p class="ingredient-type">Fat Source</p>
+                                <p class="ingredient-description">
+                                    Provides fat for texture and flavor. Butter contains milk fat compounds including 
+                                    lactones and other volatile compounds that contribute to flavor. The fat content also 
+                                    enhances absorption of lipophilic functional flavor compounds from spices.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds:</strong>
+                                    <ul>
+                                        <li>Butyric acid and other short-chain fatty acids (if butter)</li>
+                                        <li>Lactones (butter flavor compounds)</li>
+                                        <li><strong>Note:</strong> Fat enhances bioavailability of lipophilic compounds from spices</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item">
+                                <h4>5. Vanilla Extract (<em>Vanilla planifolia</em>)</h4>
+                                <p class="ingredient-type">Flavoring - Optional but Common</p>
+                                <p class="ingredient-description">
+                                    Often added to enhance the flavor profile. Vanilla extract contains over 200 identified 
+                                    compounds, with vanillin being the primary flavor compound.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds Present:</strong>
+                                    <ul>
+                                        <li><a href="compounds/vanillin.html">Vanillin</a> - 1-3% of extract (primary compound)</li>
+                                        <li><a href="compounds/eugenol.html">Eugenol</a> - Minor component</li>
+                                        <li><a href="compounds/linalool.html">Linalool</a> - Minor component</li>
+                                        <li>p-Hydroxybenzaldehyde - Minor component</li>
+                                        <li>And 200+ other minor volatile compounds</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item">
+                                <h4>6. Eggs</h4>
+                                <p class="ingredient-type">Binding Agent & Leavening</p>
+                                <p class="ingredient-description">
+                                    Provides structure, moisture, and leavening. Eggs contain various bioactive compounds 
+                                    including choline and other nutrients, but contribute minimal volatile flavor compounds 
+                                    to the final product.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds:</strong> None significant (volatile compounds)
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item">
+                                <h4>7. Milk or Water</h4>
+                                <p class="ingredient-type">Liquid</p>
+                                <p class="ingredient-description">
+                                    Provides moisture and activates leavening agents. Milk may contribute trace amounts 
+                                    of volatile compounds from dairy.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds:</strong> None significant
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item">
+                                <h4>8. Yeast or Baking Powder</h4>
+                                <p class="ingredient-type">Leavening Agent</p>
+                                <p class="ingredient-description">
+                                    Provides leavening for the dough. Yeast fermentation can produce various volatile 
+                                    compounds including alcohols and esters that contribute to flavor.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds:</strong>
+                                    <ul>
+                                        <li>Ethanol and other alcohols (from yeast fermentation)</li>
+                                        <li>Esters (from yeast metabolism)</li>
+                                        <li>Generally present at low levels in final baked product</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item">
+                                <h4>9. Salt</h4>
+                                <p class="ingredient-type">Flavor Enhancer</p>
+                                <p class="ingredient-description">
+                                    Enhances flavor perception and regulates yeast activity. Does not contribute volatile 
+                                    flavor compounds.
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Functional Compounds:</strong> None
+                                </div>
+                            </div>
+
+                            <div class="ingredient-item highlight">
+                                <h4>Additional Optional Ingredients</h4>
+                                <p class="ingredient-type">Variations</p>
+                                <p class="ingredient-description">
+                                    Some recipes may include additional spices or flavorings that contribute additional 
+                                    functional compounds:
+                                </p>
+                                <div class="compounds-in-ingredient">
+                                    <strong>Potential Additional Functional Compounds:</strong>
+                                    <ul>
+                                        <li><strong>Nutmeg:</strong> Contains <a href="compounds/myrcene.html">myrcene</a>, 
+                                            <a href="compounds/pinene.html">pinene</a>, <a href="compounds/safrole.html">safrole</a> (trace), 
+                                            and other terpenes</li>
+                                        <li><strong>Allspice:</strong> Contains <a href="compounds/eugenol.html">eugenol</a> 
+                                            (major component), <a href="compounds/linalool.html">linalool</a>, and other compounds</li>
+                                        <li><strong>Cardamom:</strong> Contains <a href="compounds/limonene.html">limonene</a>, 
+                                            <a href="compounds/pinene.html">pinene</a>, <a href="compounds/linalool.html">linalool</a>, 
+                                            and other terpenes</li>
+                                        <li><strong>Cloves:</strong> Contains <a href="compounds/eugenol.html">eugenol</a> 
+                                            (70-90% of essential oil), β-caryophyllene, and other compounds</li>
+                                        <li><strong>Ginger:</strong> Contains gingerol, shogaol, and various terpenes</li>
+                                        <li><strong>Orange or Lemon Zest:</strong> Contains <a href="compounds/limonene.html">limonene</a> 
+                                            (major component), <a href="compounds/pinene.html">pinene</a>, and other citrus terpenes</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3>Compound Concentration by Ingredient</h3>
+                        <p>
+                            The following table shows the primary sources of functional flavor compounds in a typical 
+                            cinnamon roll:
+                        </p>
+                        <table class="ingredient-compound-table">
+                            <thead>
+                                <tr>
+                                    <th>Functional Compound</th>
+                                    <th>Primary Ingredient Source</th>
+                                    <th>Typical Concentration in Ingredient</th>
+                                    <th>Estimated Amount in Cinnamon Roll*</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="compounds/cinnamaldehyde.html">Cinnamaldehyde</a></td>
+                                    <td>Cinnamon</td>
+                                    <td>60-90% of essential oil</td>
+                                    <td>10-50 mg</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="compounds/eugenol.html">Eugenol</a></td>
+                                    <td>Cinnamon, Vanilla (if used)</td>
+                                    <td>5-10% of cinnamon oil</td>
+                                    <td>1-5 mg</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="compounds/linalool.html">Linalool</a></td>
+                                    <td>Cinnamon, Vanilla</td>
+                                    <td>2-5% of cinnamon oil</td>
+                                    <td>0.5-2 mg</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="compounds/vanillin.html">Vanillin</a></td>
+                                    <td>Vanilla Extract</td>
+                                    <td>1-3% of extract</td>
+                                    <td>0.5-2 mg</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="compounds/cinnamyl-acetate.html">Cinnamyl Acetate</a></td>
+                                    <td>Cinnamon</td>
+                                    <td>1-5% of essential oil</td>
+                                    <td>0.2-1 mg</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="compounds/coumarin.html">Coumarin</a></td>
+                                    <td>Cinnamon (Cassia)</td>
+                                    <td>Trace to 0.4%</td>
+                                    <td>0.1-0.5 mg</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="compounds/benzaldehyde.html">Benzaldehyde</a></td>
+                                    <td>Cinnamon</td>
+                                    <td>Minor component</td>
+                                    <td>0.1-0.5 mg</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="table-note">
+                            *Estimated amounts are approximate and vary significantly based on recipe, cinnamon type, 
+                            and preparation method. Amounts are for a typical cinnamon roll (approximately 100-150g).
+                        </p>
+                    </section>
+
+                    <section>
+                        <h3>Synergistic Effects</h3>
+                        <p>
+                            The combination of ingredients in a cinnamon roll creates opportunities for synergistic 
+                            effects between functional compounds:
+                        </p>
+                        <ul>
+                            <li><strong>Fat-Enhanced Bioavailability:</strong> Butter/fat in the recipe enhances 
+                                absorption of lipophilic compounds like cinnamaldehyde, eugenol, and terpenes</li>
+                            <li><strong>Compound Interactions:</strong> Multiple compounds from cinnamon may work 
+                                synergistically (e.g., cinnamaldehyde + eugenol for anti-inflammatory effects)</li>
+                            <li><strong>Matrix Effects:</strong> The food matrix (flour, fat, sugar) affects release 
+                                and absorption of volatile compounds</li>
+                            <li><strong>Heat Processing:</strong> Baking may create new compounds through Maillard 
+                                reactions and thermal degradation</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h3>Ingredient Quality and Compound Content</h3>
+                        <p>
+                            The functional compound content in the final product depends on several factors:
+                        </p>
+                        <ul>
+                            <li><strong>Cinnamon Type:</strong> Ceylon cinnamon vs. Cassia cinnamon have different 
+                                compound profiles (Cassia has higher coumarin)</li>
+                            <li><strong>Spice Quality:</strong> Freshness, storage conditions, and processing affect 
+                                volatile compound content</li>
+                            <li><strong>Recipe Proportions:</strong> Amount of cinnamon and vanilla used in the recipe</li>
+                            <li><strong>Processing:</strong> Grinding, mixing, and baking temperatures affect compound 
+                                stability and release</li>
+                            <li><strong>Storage:</strong> Time and conditions after baking affect volatile compound 
+                                retention</li>
+                        </ul>
+                    </section>
+                </div>
+
+                <!-- Compounds Tab -->
+                <div id="compounds" class="tab-content">
+                    <section>
+                        <h3>Functional Flavor Compounds in Cinnamon Roll</h3>
+                        <p>
+                            The following compounds have been identified in cinnamon rolls through GCMS analysis. 
+                            Click on any compound to learn about its function in human physiology.
+                        </p>
+                        
+                        <div class="compounds-list">
+                            <div class="compound-item">
+                                <h4><a href="compounds/cinnamaldehyde.html">Cinnamaldehyde</a></h4>
+                                <p class="formula">C₉H₈O</p>
+                                <p>Primary flavor compound in cinnamon. Effects on glucose metabolism, inflammation, and neuroprotection.</p>
+                                <a href="compounds/cinnamaldehyde.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/eugenol.html">Eugenol</a></h4>
+                                <p class="formula">C₁₀H₁₂O₂</p>
+                                <p>Phenolic compound with analgesic, anti-inflammatory, and antimicrobial properties.</p>
+                                <a href="compounds/eugenol.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/linalool.html">Linalool</a></h4>
+                                <p class="formula">C₁₀H₁₈O</p>
+                                <p>Monoterpene alcohol with anxiolytic, sedative, and anti-inflammatory effects.</p>
+                                <a href="compounds/linalool.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/vanillin.html">Vanillin</a></h4>
+                                <p class="formula">C₈H₈O₃</p>
+                                <p>Primary flavor compound in vanilla. Antioxidant, anti-inflammatory, and neuroprotective properties.</p>
+                                <a href="compounds/vanillin.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/coumarin.html">Coumarin</a></h4>
+                                <p class="formula">C₉H₆O₂</p>
+                                <p>Benzopyrone compound with anti-inflammatory and antioxidant effects. Safety considerations at high doses.</p>
+                                <a href="compounds/coumarin.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/cinnamyl-acetate.html">Cinnamyl Acetate</a></h4>
+                                <p class="formula">C₁₁H₁₂O₂</p>
+                                <p>Ester derivative contributing fruity, balsamic notes. Metabolized to cinnamaldehyde-related compounds.</p>
+                                <a href="compounds/cinnamyl-acetate.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/limonene.html">Limonene</a></h4>
+                                <p class="formula">C₁₀H₁₆</p>
+                                <p>Monoterpene found in citrus fruits. Mood enhancement, anti-inflammatory, and gastroprotective effects.</p>
+                                <a href="compounds/limonene.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/pinene.html">Pinene</a></h4>
+                                <p class="formula">C₁₀H₁₆</p>
+                                <p>Bicyclic monoterpene found in pine and rosemary. Bronchodilatory, anti-inflammatory, and cognitive enhancement effects.</p>
+                                <a href="compounds/pinene.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/myrcene.html">Myrcene</a></h4>
+                                <p class="formula">C₁₀H₁₆</p>
+                                <p>Acyclic monoterpene found in hops and bay leaves. Sedative, muscle relaxant, and bioavailability-enhancing properties.</p>
+                                <a href="compounds/myrcene.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/thymol.html">Thymol</a></h4>
+                                <p class="formula">C₁₀H₁₄O</p>
+                                <p>Phenolic monoterpene found in thyme and oregano. Potent antimicrobial, anti-inflammatory, and antioxidant properties.</p>
+                                <a href="compounds/thymol.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/carvacrol.html">Carvacrol</a></h4>
+                                <p class="formula">C₁₀H₁₄O</p>
+                                <p>Phenolic monoterpene (isomer of thymol) found in oregano. Highly potent antimicrobial and anti-inflammatory properties.</p>
+                                <a href="compounds/carvacrol.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/menthol.html">Menthol</a></h4>
+                                <p class="formula">C₁₀H₂₀O</p>
+                                <p>Cyclic monoterpene alcohol found in mint. Cooling sensation through TRPM8 activation, analgesic, and antimicrobial effects.</p>
+                                <a href="compounds/menthol.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/anethole.html">Anethole</a></h4>
+                                <p class="formula">C₁₀H₁₂O</p>
+                                <p>Phenylpropenoid found in anise and fennel. Weak estrogenic activity, antimicrobial, anti-inflammatory, and gastrointestinal effects.</p>
+                                <a href="compounds/anethole.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/camphor.html">Camphor</a></h4>
+                                <p class="formula">C₁₀H₁₆O</p>
+                                <p>Bicyclic monoterpene ketone. Topical analgesic, counterirritant, and antimicrobial. Safety considerations at high doses.</p>
+                                <a href="compounds/camphor.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/benzaldehyde.html">Benzaldehyde</a></h4>
+                                <p class="formula">C₇H₆O</p>
+                                <p>Aromatic aldehyde found in almonds, cinnamon, and stone fruits. Antimicrobial and antioxidant properties.</p>
+                                <a href="compounds/benzaldehyde.html" class="view-compound">View Details →</a>
+                            </div>
+
+                            <div class="compound-item">
+                                <h4><a href="compounds/safrole.html">Safrole</a></h4>
+                                <p class="formula">C₁₀H₁₀O₂</p>
+                                <p>Benzodioxole compound found in sassafras, nutmeg. Banned as food additive due to carcinogenicity. Included for educational purposes.</p>
+                                <a href="compounds/safrole.html" class="view-compound">View Details →</a>
+                            </div>
+                        </div>
+
+                        <p style="margin-top: 2rem;">
+                            <a href="compounds.html" class="cta-link">View All Compounds in Database →</a>
+                        </p>
+                    </section>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Terpedia. Scientific repository for functional flavors research.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+    </script>
+</body>
+</html>
