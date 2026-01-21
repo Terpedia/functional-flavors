@@ -6,6 +6,7 @@
     <title>Cinnamon Roll - Functional Flavors | Terpedia</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="coa-styles.css">
+    <link rel="stylesheet" href="chat-widget.css">
     <style>
         /* Tab Styles */
         .tabs-container {
@@ -1000,6 +1001,17 @@
             month: 'long', 
             day: 'numeric' 
         });
+    </script>
+    
+    <!-- Chat Widget -->
+    <script src="chat-widget.js"></script>
+    <script>
+        if (window.terpediaChat) {
+            const apiEndpoint = window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000/api/chat'
+                : 'https://api.terpedia.com/chat';
+            window.terpediaChat.setApiEndpoint(apiEndpoint);
+        }
     </script>
 </body>
 </html>

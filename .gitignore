@@ -2,6 +2,11 @@
 node_modules/
 package-lock.json
 
+# API keys and environment variables
+.env
+.env.local
+*.key
+
 # Playwright
 test-results/
 playwright-report/

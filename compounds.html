@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Compounds - Terpedia</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="chat-widget.css">
 </head>
 <body>
     <header>
@@ -210,5 +211,16 @@
             <p>&copy; 2024 Terpedia. Scientific repository for functional flavors research.</p>
         </div>
     </footer>
+    
+    <!-- Chat Widget -->
+    <script src="chat-widget.js"></script>
+    <script>
+        if (window.terpediaChat) {
+            const apiEndpoint = window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000/api/chat'
+                : 'https://api.terpedia.com/chat';
+            window.terpediaChat.setApiEndpoint(apiEndpoint);
+        }
+    </script>
 </body>
 </html>
