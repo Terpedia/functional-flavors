@@ -377,7 +377,7 @@ class TerpediaChatWidget {
                 </div>
                 <div class="chat-widget-messages" id="chatMessages">
                     <div class="chat-welcome">
-                        <p>👋 Hello! I'm Terpedia Chat, powered by the Terpedia Knowledge Base. I can help you with:</p>
+                        <p>👋 Hello! I'm Terpedia Chat, powered by local RAG + Terpedia Knowledge Base. I can help you with:</p>
                         <ul>
                             <li>Questions about functional flavors and their mechanisms</li>
                             <li>Information about terpenes, essential oils, and compounds</li>
@@ -386,6 +386,7 @@ class TerpediaChatWidget {
                             <li>FDA regulations and health claims</li>
                             <li>Safety and toxicology information</li>
                         </ul>
+                        <p><small>💡 I use local RAG to find relevant content from this site, then use Terpedia's LLM to generate comprehensive answers.</small></p>
                         <p id="dbStatus">Loading local RAG and connecting to Terpedia Chat...</p>
                     </div>
                 </div>
