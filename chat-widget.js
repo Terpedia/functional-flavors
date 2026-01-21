@@ -6,7 +6,9 @@ class TerpediaChatWidget {
         this.isOpen = false;
         this.messages = [];
         this.db = null;
+        this.sqlite3 = null;
         this.initialized = false;
+        this.apiEndpoint = 'http://kb.terpedia.com:8000/chat'; // KB Terpedia API fallback
         this.init();
     }
 
@@ -19,51 +21,63 @@ class TerpediaChatWidget {
     async loadDatabase() {
         try {
             // Load SQLite-WASM
-            if (!window.sqlite3InitModule) {
-                await this.loadSQLiteWASM();
+            await this.loadSQLiteWASM();
+            
+            // Load database file
+            const response = await fetch('rag.sqlite');
+            if (!response.ok) {
+                throw new Error(`Failed to load database: ${response.status}`);
             }
             
-            // Initialize SQLite
-            const sqlite3 = await window.sqlite3InitModule({
-                print: console.log,
-                printErr: console.error,
-            });
-            
-            // Load sqlite-vec extension
-            // Note: sqlite-vec WASM needs to be loaded separately
-            // For now, we'll use a simplified approach
+            const arrayBuffer = await response.arrayBuffer();
+            const dbBytes = new Uint8Array(arrayBuffer);
             
             // Open database
-            const dbPath = 'rag.sqlite';
-            const response = await fetch(dbPath);
-            const arrayBuffer = await response.arrayBuffer();
+            this.db = new this.sqlite3.oo1.DB(dbBytes, 'c');
             
-            // Create SQLite database from buffer
-            this.db = new sqlite3.oo1.DB(new Uint8Array(arrayBuffer), 'c');
+            // Try to load sqlite-vec extension (if available)
+            try {
+                // sqlite-vec extension would be loaded here
+                // For now, we'll use keyword search as fallback
+                console.log('✓ Database loaded (keyword search mode)');
+            } catch (e) {
+                console.log('⚠ sqlite-vec not available, using keyword search');
+            }
             
-            console.log('✓ RAG database loaded');
             this.initialized = true;
+            this.updateStatus('✓ Knowledge base loaded and ready!', 'success');
         } catch (error) {
             console.warn('Could not load SQLite database:', error);
-            console.warn('Falling back to KB Terpedia API');
             this.initialized = false;
-            // Fallback to API - try multiple endpoints
-            this.apiEndpoint = 'http://kb.terpedia.com:8000/chat'; // Primary from KB_CHAT_USAGE.md
-            this.fallbackEndpoints = [
-                'https://kb.terpedia.com/chat',
-                'https://kb.terpedia.com:8000/chat',
-                'https://kb.terpedia.com/v1/chat/completions'
-            ];
+            this.updateStatus('⚠ Using API fallback (database not available)', 'warning');
         }
     }
 
     async loadSQLiteWASM() {
         return new Promise((resolve, reject) => {
+            // Check if already loaded
+            if (window.sqlite3InitModule) {
+                this.sqlite3 = window.sqlite3;
+                resolve();
+                return;
+            }
+            
             // Load SQLite-WASM from CDN
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/@sqlite.org/sqlite-wasm@3.45.1/sqlite-wasm/jswasm/sqlite3.mjs';
             script.type = 'module';
-            script.onload = () => resolve();
+            script.onload = async () => {
+                try {
+                    // Initialize SQLite
+                    this.sqlite3 = await window.sqlite3InitModule({
+                        print: console.log,
+                        printErr: console.error,
+                    });
+                    resolve();
+                } catch (e) {
+                    reject(e);
+                }
+            };
             script.onerror = () => reject(new Error('Failed to load SQLite-WASM'));
             document.head.appendChild(script);
         });
@@ -75,14 +89,17 @@ class TerpediaChatWidget {
         }
         
         try {
-            // Generate query embedding (would need OpenAI API in browser or pre-computed)
-            // For now, use keyword-based search as fallback
             const queryLower = query.toLowerCase();
             const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
             
-            // Build SQL query with keyword matching
+            if (queryWords.length === 0) {
+                return [];
+            }
+            
+            // Build keyword-based search query
+            // This works without sqlite-vec, using LIKE for keyword matching
             const conditions = queryWords.map(word => 
-                `chunk_text LIKE '%${word}%'`
+                `chunk_text LIKE '%' || ? || '%'`
             ).join(' OR ');
             
             const sql = `
@@ -97,17 +114,18 @@ class TerpediaChatWidget {
                 WHERE ${conditions}
                 ORDER BY 
                     CASE 
-                        ${queryWords.map((word, i) => 
-                            `WHEN chunk_text LIKE '%${word}%' THEN ${queryWords.length - i}`
-                        ).join(' ')}
-                        ELSE 0
-                    END DESC
+                        WHEN chunk_text LIKE '%' || ? || '%' THEN 10
+                        ELSE 1
+                    END DESC,
+                    word_count DESC
                 LIMIT ?
             `;
             
+            // Execute query with parameters
+            const params = [...queryWords, queryWords[0], topK];
             const results = this.db.exec({
                 sql: sql,
-                bind: [topK],
+                bind: params,
                 returnValue: 'resultRows',
                 rowMode: 'object'
             });
@@ -120,7 +138,7 @@ class TerpediaChatWidget {
     }
 
     async generateResponse(userMessage) {
-        // Try vector search first if database is loaded
+        // Try vector/keyword search first if database is loaded
         if (this.initialized && this.db) {
             const relevantChunks = await this.findRelevantChunks(userMessage, 5);
             
@@ -130,55 +148,48 @@ class TerpediaChatWidget {
             }
         }
         
-        // Fallback to API if database not available
-        if (this.apiEndpoint || this.fallbackEndpoints) {
-            return await this.callAPI(userMessage);
-        }
-        
-        // Final fallback
-        return `I'm having trouble accessing the knowledge base. Please try again or browse the site using the navigation menu.`;
+        // Fallback to API
+        return await this.callAPI(userMessage);
     }
 
     async callAPI(userMessage) {
-        const endpoints = this.apiEndpoint 
-            ? [this.apiEndpoint, ...(this.fallbackEndpoints || [])]
-            : (this.fallbackEndpoints || []);
-        
-        let lastError;
-        
-        for (const endpoint of endpoints) {
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: userMessage,
-                        context: {
-                            conversation_history: this.messages.slice(-10),
-                            site: 'functional-flavors'
-                        }
-                    }),
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    return data.response || data.message || JSON.stringify(data);
-                }
-            } catch (error) {
-                lastError = error;
-                // Try next endpoint
-                continue;
+        try {
+            const response = await fetch(this.apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: userMessage,
+                    context: {
+                        conversation_history: this.messages.slice(-10),
+                        site: 'functional-flavors'
+                    }
+                }),
+            });
+            
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
             }
+            
+            const data = await response.json();
+            return data.response || data.message || JSON.stringify(data);
+        } catch (error) {
+            // If API fails and we have database, try harder with database
+            if (this.initialized && this.db) {
+                const chunks = await this.findRelevantChunks(userMessage, 10);
+                if (chunks.length > 0) {
+                    return this.generateContextualResponse(userMessage, chunks, 
+                        chunks.map(c => c.chunk_text).join('\n\n'));
+                }
+            }
+            throw error;
         }
-        
-        throw lastError || new Error('All API endpoints failed');
     }
 
     generateContextualResponse(query, chunks, context) {
         if (chunks.length === 0) {
-            return this.generateResponse(query); // Fallback
+            return `I couldn't find specific information about "${query}" in the site content. Try asking about functional flavors, compounds, FDA regulations, or safety information.`;
         }
         
         const topChunks = chunks.slice(0, 3);
@@ -186,7 +197,7 @@ class TerpediaChatWidget {
         const sourceText = sources.length > 0 ? `\n\n*Sources: ${sources.join(', ')}*` : '';
         
         const combinedText = topChunks.map(c => c.chunk_text).join('\n\n---\n\n');
-        const excerpt = combinedText.substring(0, 800);
+        const excerpt = combinedText.substring(0, 1000);
         
         return `Based on the site content, here's what I found:\n\n${excerpt}${excerpt.length < combinedText.length ? '...' : ''}${sourceText}\n\nFor more complete information, check the relevant sections in the article or use the table of contents to navigate directly.`;
     }
@@ -232,7 +243,7 @@ class TerpediaChatWidget {
                     </button>
                 </div>
                 <div class="chat-widget-footer">
-                    <small>Powered by SQLite-Vec • Terpedia</small>
+                    <small>Powered by SQLite-Vec • KB Terpedia API</small>
                 </div>
             </div>
             <button class="chat-widget-toggle" id="chatToggleBtn" aria-label="Open chat">
@@ -263,25 +274,22 @@ class TerpediaChatWidget {
                 }
             }, 100);
         });
-        
-        // Update status when database loads
-        this.updateStatus();
     }
 
-    updateStatus() {
+    updateStatus(message, type = 'info') {
         const statusEl = document.getElementById('dbStatus');
         if (statusEl) {
-            if (this.initialized) {
-                statusEl.textContent = '✓ Knowledge base loaded and ready!';
-                statusEl.style.color = '#27ae60';
-                document.getElementById('chatInput').disabled = false;
-                document.getElementById('chatSendBtn').disabled = false;
-            } else {
-                statusEl.textContent = '⚠ Using API fallback (database not available)';
-                statusEl.style.color = '#e67e22';
-                document.getElementById('chatInput').disabled = false;
-                document.getElementById('chatSendBtn').disabled = false;
-            }
+            statusEl.textContent = message;
+            statusEl.style.color = type === 'success' ? '#27ae60' : 
+                                  type === 'warning' ? '#e67e22' : '#7f8c8d';
+        }
+        
+        // Enable/disable input based on status
+        const input = document.getElementById('chatInput');
+        const button = document.getElementById('chatSendBtn');
+        if (input && button) {
+            input.disabled = false; // Always enable (can use API fallback)
+            button.disabled = false;
         }
     }
 
