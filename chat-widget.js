@@ -6,15 +6,15 @@ class TerpediaChatWidget {
         this.isOpen = false;
         this.messages = [];
         // Use KB Terpedia chat API
-        // Try multiple possible endpoints
-        const possibleEndpoints = [
-            'https://kb.terpedia.com/chat',
+        // Primary endpoint from KB_CHAT_USAGE.md
+        // Note: If using HTTP, browser may block due to mixed content (HTTPS site calling HTTP API)
+        // Consider setting up HTTPS proxy or using HTTPS endpoint
+        this.apiEndpoint = 'https://kb.terpedia.com/chat'; // Try HTTPS first
+        this.fallbackEndpoints = [
             'https://kb.terpedia.com:8000/chat',
             'https://kb.terpedia.com/v1/chat/completions',
-            'http://kb.terpedia.com:8000/chat'
+            'http://kb.terpedia.com:8000/chat' // Fallback to HTTP (may be blocked by browser)
         ];
-        this.apiEndpoint = possibleEndpoints[0]; // Primary endpoint
-        this.fallbackEndpoints = possibleEndpoints.slice(1);
         this.init();
     }
 
