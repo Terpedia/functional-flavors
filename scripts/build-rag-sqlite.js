@@ -80,10 +80,14 @@ class RAGSQLiteBuilder {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             
-            -- Create vec0 table for embeddings (sqlite-vec)
-            CREATE VIRTUAL TABLE chunks_embedding USING vec0(
+            -- Create embeddings table
+            -- Note: When sqlite-vec extension is available, this can be converted to:
+            -- CREATE VIRTUAL TABLE chunks_embedding USING vec0(...)
+            -- For now, we store embeddings as BLOB for future vector search
+            CREATE TABLE chunks_embedding (
                 embedding_id INTEGER PRIMARY KEY,
-                embedding BLOB
+                embedding BLOB,
+                FOREIGN KEY (embedding_id) REFERENCES chunks(id)
             );
             
             -- Create metadata table
@@ -311,8 +315,10 @@ class RAGSQLiteBuilder {
                 
                 const chunkId = result.lastInsertRowid;
                 
-                // Insert embedding (sqlite-vec expects Float32Array as BLOB)
-                const embeddingBlob = Buffer.from(new Float32Array(embedding).buffer);
+                // Insert embedding (store as BLOB - Float32Array)
+                // When sqlite-vec is loaded, these can be used for vector search
+                const embeddingArray = new Float32Array(embedding);
+                const embeddingBlob = Buffer.from(embeddingArray.buffer);
                 insertEmbedding.run(chunkId, embeddingBlob);
             }
         }
@@ -344,10 +350,20 @@ class RAGSQLiteBuilder {
             CREATE INDEX idx_chunks_page_url ON chunks(page_url);
             CREATE INDEX idx_chunks_page_title ON chunks(page_title);
             CREATE INDEX idx_chunks_section_heading ON chunks(section_heading);
+            
+            -- Full-text search index (for keyword search)
+            CREATE VIRTUAL TABLE chunks_fts USING fts5(
+                chunk_text,
+                content='chunks',
+                content_rowid='id'
+            );
+            
+            -- Populate FTS index
+            INSERT INTO chunks_fts(rowid, chunk_text)
+            SELECT id, chunk_text FROM chunks;
         `);
         
-        // sqlite-vec automatically creates indexes for vector search
-        console.log('✓ Indexes created');
+        console.log('✓ Indexes created (including FTS5 for full-text search)');
         
         db.close();
     }

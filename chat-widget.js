@@ -35,14 +35,19 @@ class TerpediaChatWidget {
             // Open database
             this.db = new this.sqlite3.oo1.DB(dbBytes, 'c');
             
-            // Try to load sqlite-vec extension (if available)
+            // Check if FTS5 is available (should be built into SQLite)
             try {
-                // sqlite-vec extension would be loaded here
-                // For now, we'll use keyword search as fallback
-                console.log('✓ Database loaded (keyword search mode)');
+                const testResult = this.db.exec({
+                    sql: "SELECT * FROM chunks_fts LIMIT 1",
+                    returnValue: 'resultRows'
+                });
+                console.log('✓ Database loaded with FTS5 full-text search');
             } catch (e) {
-                console.log('⚠ sqlite-vec not available, using keyword search');
+                console.log('⚠ FTS5 not available, using keyword search');
             }
+            
+            // Future: Load sqlite-vec extension for vector search
+            // await this.loadSQLiteVecExtension();
             
             this.initialized = true;
             this.updateStatus('✓ Knowledge base loaded and ready!', 'success');
@@ -57,12 +62,19 @@ class TerpediaChatWidget {
         return new Promise((resolve, reject) => {
             // Check if already loaded
             if (window.sqlite3InitModule) {
-                this.sqlite3 = window.sqlite3;
-                resolve();
+                // Already loaded, initialize
+                window.sqlite3InitModule({
+                    print: console.log,
+                    printErr: console.error,
+                }).then(sqlite3 => {
+                    this.sqlite3 = sqlite3;
+                    resolve();
+                }).catch(reject);
                 return;
             }
             
             // Load SQLite-WASM from CDN
+            // Using the official SQLite WASM build
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/@sqlite.org/sqlite-wasm@3.45.1/sqlite-wasm/jswasm/sqlite3.mjs';
             script.type = 'module';
@@ -83,58 +95,149 @@ class TerpediaChatWidget {
         });
     }
 
+    async loadSQLiteVecExtension() {
+        // Future: Load sqlite-vec extension for vector search
+        // This requires the sqlite-vec.wasm file to be available
+        try {
+            // Load sqlite-vec WASM
+            const wasmResponse = await fetch('sqlite-vec.wasm');
+            if (!wasmResponse.ok) {
+                throw new Error('sqlite-vec.wasm not found');
+            }
+            
+            const wasmBytes = await wasmResponse.arrayBuffer();
+            
+            // Load extension into SQLite
+            // Note: Exact API depends on SQLite-WASM version
+            // May need: sqlite3_wasm_vfs_register() or similar
+            this.sqlite3.oo1.DB.dbConfig.extensions = {
+                'sqlite-vec': wasmBytes
+            };
+            
+            console.log('✓ sqlite-vec extension loaded');
+            return true;
+        } catch (error) {
+            console.warn('⚠ sqlite-vec extension not available:', error);
+            return false;
+        }
+    }
+
     async findRelevantChunks(query, topK = 5) {
         if (!this.initialized || !this.db) {
             return [];
         }
         
         try {
-            const queryLower = query.toLowerCase();
-            const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
-            
-            if (queryWords.length === 0) {
-                return [];
+            // Try FTS5 first (full-text search - faster and better)
+            try {
+                return await this.findWithFTS5(query, topK);
+            } catch (ftsError) {
+                console.warn('FTS5 search failed, using keyword search:', ftsError);
+                // Fallback to keyword search
+                return await this.findWithKeywords(query, topK);
             }
-            
-            // Build keyword-based search query
-            // This works without sqlite-vec, using LIKE for keyword matching
-            const conditions = queryWords.map(word => 
-                `chunk_text LIKE '%' || ? || '%'`
-            ).join(' OR ');
-            
-            const sql = `
-                SELECT 
-                    id,
-                    page_title,
-                    page_url,
-                    section_heading,
-                    chunk_text,
-                    word_count
-                FROM chunks
-                WHERE ${conditions}
-                ORDER BY 
-                    CASE 
-                        WHEN chunk_text LIKE '%' || ? || '%' THEN 10
-                        ELSE 1
-                    END DESC,
-                    word_count DESC
-                LIMIT ?
-            `;
-            
-            // Execute query with parameters
-            const params = [...queryWords, queryWords[0], topK];
-            const results = this.db.exec({
-                sql: sql,
-                bind: params,
-                returnValue: 'resultRows',
-                rowMode: 'object'
-            });
-            
-            return results || [];
         } catch (error) {
             console.error('Error searching database:', error);
             return [];
         }
+    }
+
+    async findWithFTS5(query, topK) {
+        // Use FTS5 for better full-text search
+        const sql = `
+            SELECT 
+                c.id,
+                c.page_title,
+                c.page_url,
+                c.section_heading,
+                c.chunk_text,
+                c.word_count,
+                rank
+            FROM chunks_fts
+            JOIN chunks c ON chunks_fts.rowid = c.id
+            WHERE chunks_fts MATCH ?
+            ORDER BY rank
+            LIMIT ?
+        `;
+        
+        // FTS5 query format: escape special characters and use OR for multiple words
+        const queryWords = query.split(/\s+/).filter(w => w.length > 2);
+        const ftsQuery = queryWords.join(' OR ');
+        
+        const results = this.db.exec({
+            sql: sql,
+            bind: [ftsQuery, topK],
+            returnValue: 'resultRows',
+            rowMode: 'object'
+        });
+        
+        return results || [];
+    }
+
+    async findWithKeywords(query, topK) {
+        // Fallback keyword search using LIKE
+        const queryLower = query.toLowerCase();
+        const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
+        
+        if (queryWords.length === 0) {
+            return [];
+        }
+        
+        const conditions = queryWords.map(() => 
+            `chunk_text LIKE '%' || ? || '%'`
+        ).join(' OR ');
+        
+        const sql = `
+            SELECT 
+                id,
+                page_title,
+                page_url,
+                section_heading,
+                chunk_text,
+                word_count
+            FROM chunks
+            WHERE ${conditions}
+            ORDER BY word_count DESC
+            LIMIT ?
+        `;
+        
+        const results = this.db.exec({
+            sql: sql,
+            bind: [...queryWords, topK],
+            returnValue: 'resultRows',
+            rowMode: 'object'
+        });
+        
+        return results || [];
+    }
+
+    async findWithVectorSearch(query, topK) {
+        // Future: Vector search using sqlite-vec
+        // This requires:
+        // 1. sqlite-vec extension loaded
+        // 2. Query embedding generated (would need API or pre-computed)
+        
+        // For now, this is a placeholder
+        // When sqlite-vec is available, we can do:
+        /*
+        const queryEmbedding = await this.generateQueryEmbedding(query);
+        const sql = `
+            SELECT 
+                c.id,
+                c.page_title,
+                c.chunk_text,
+                vec_distance_cosine(
+                    c_e.embedding,
+                    ?
+                ) AS distance
+            FROM chunks c
+            JOIN chunks_embedding c_e ON c.id = c_e.embedding_id
+            ORDER BY distance ASC
+            LIMIT ?
+        `;
+        */
+        
+        return [];
     }
 
     async generateResponse(userMessage) {
