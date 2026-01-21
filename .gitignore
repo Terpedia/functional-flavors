@@ -7,6 +7,9 @@ package-lock.json
 .env.local
 *.key
 
+# RAG index (will be generated and committed)
+# rag-index.json
+
 # Playwright
 test-results/
 playwright-report/

@@ -1,107 +1,52 @@
-// Terpedia Chat Widget - Client-Side RAG Implementation
-// Works entirely statically without backend
+// Terpedia Chat Widget - File-Based RAG Implementation
+// Works entirely statically with pre-built RAG index
 
 class TerpediaChatWidget {
     constructor() {
         this.isOpen = false;
         this.messages = [];
-        this.siteContent = null;
+        this.ragIndex = null;
         this.init();
     }
 
-    init() {
-        this.loadSiteContent();
+    async init() {
+        await this.loadRAGIndex();
         this.createWidget();
         this.loadChatHistory();
     }
 
-    async loadSiteContent() {
-        // Load content from current page and other pages for RAG
+    async loadRAGIndex() {
         try {
-            // Get current page content
-            const currentPageContent = this.extractPageContent();
-            
-            // Try to load other key pages
-            const pagesToLoad = [
-                'index.html',
-                'compounds.html',
-                'about.html',
-                'cinnamon-roll-tabs.html'
-            ];
-            
-            const allContent = [currentPageContent];
-            
-            // Load other pages asynchronously (only if on same domain)
-            if (window.location.protocol !== 'file:') {
-                for (const page of pagesToLoad) {
-                    if (page !== this.getCurrentPageName()) {
-                        try {
-                            const content = await this.fetchPageContent(page);
-                            if (content) allContent.push(content);
-                        } catch (e) {
-                            // Silently fail - just use current page
-                        }
-                    }
-                }
+            const response = await fetch('rag-index.json');
+            if (!response.ok) {
+                throw new Error(`Failed to load RAG index: ${response.status}`);
             }
-            
-            this.siteContent = {
-                fullText: allContent.join('\n\n'),
-                chunks: this.chunkText(allContent.join('\n\n'), 500)
-            };
+            this.ragIndex = await response.json();
+            console.log(`Loaded RAG index with ${this.ragIndex.totalChunks} chunks from ${this.ragIndex.totalPages} pages`);
         } catch (error) {
-            console.warn('Could not load site content:', error);
-            this.siteContent = { fullText: '', chunks: [] };
+            console.warn('Could not load RAG index:', error);
+            // Fallback to current page content
+            this.ragIndex = null;
+            this.loadFallbackContent();
         }
     }
 
-    getCurrentPageName() {
-        const path = window.location.pathname;
-        return path.split('/').pop() || 'index.html';
-    }
-
-    extractPageContent() {
-        // Extract text content from current page
+    loadFallbackContent() {
+        // Fallback: extract from current page
         const article = document.querySelector('article') || document.querySelector('main');
-        if (!article) return '';
+        if (!article) return;
         
-        // Clone to avoid modifying DOM
         const clone = article.cloneNode(true);
-        
-        // Remove scripts and styles
         clone.querySelectorAll('script, style, nav, footer').forEach(el => el.remove());
+        const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
         
-        // Get text content
-        let text = clone.textContent || clone.innerText || '';
-        
-        // Clean up
-        text = text.replace(/\s+/g, ' ').trim();
-        
-        // Extract headings for context
-        const headings = Array.from(article.querySelectorAll('h1, h2, h3, h4')).map(h => h.textContent.trim());
-        
-        return `Page: ${document.title}\nHeadings: ${headings.join(' > ')}\n\n${text}`;
-    }
-
-    async fetchPageContent(url) {
-        try {
-            const response = await fetch(url);
-            const html = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const article = doc.querySelector('article') || doc.querySelector('main');
-            if (!article) return null;
-            
-            // Remove scripts, styles, nav, footer
-            article.querySelectorAll('script, style, nav, footer').forEach(el => el.remove());
-            
-            const text = (article.textContent || article.innerText || '').replace(/\s+/g, ' ').trim();
-            const headings = Array.from(article.querySelectorAll('h1, h2, h3, h4')).map(h => h.textContent.trim());
-            
-            return `Page: ${doc.title}\nHeadings: ${headings.join(' > ')}\n\n${text}`;
-        } catch (e) {
-            return null;
-        }
+        this.ragIndex = {
+            chunks: this.chunkText(text, 500).map((chunk, i) => ({
+                id: `fallback-${i}`,
+                pageTitle: document.title,
+                text: chunk
+            }))
+        };
     }
 
     chunkText(text, chunkSize = 500) {
@@ -122,178 +67,214 @@ class TerpediaChatWidget {
             chunks.push(currentChunk.trim());
         }
         
-        return chunks;
+        return chunks.filter(c => c.length > 50);
     }
 
-    findRelevantContext(query, topK = 5) {
-        if (!this.siteContent || !this.siteContent.chunks.length) {
-            return '';
+    findRelevantChunks(query, topK = 5) {
+        if (!this.ragIndex || !this.ragIndex.chunks || !this.ragIndex.chunks.length) {
+            return [];
         }
         
         const queryLower = query.toLowerCase();
         const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
         
-        // Score chunks by keyword matches and position
-        const scoredChunks = this.siteContent.chunks.map((chunk, index) => {
-            const chunkLower = chunk.toLowerCase();
+        // Score chunks by relevance
+        const scoredChunks = this.ragIndex.chunks.map(chunk => {
+            const chunkLower = chunk.text.toLowerCase();
             let score = 0;
             
-            // Exact phrase match (higher weight)
+            // Exact phrase match (highest weight)
             if (chunkLower.includes(queryLower)) {
-                score += 10;
+                score += 20;
             }
             
             // Individual word matches
             queryWords.forEach(word => {
-                const matches = (chunkLower.match(new RegExp(word, 'g')) || []).length;
-                score += matches * 2;
+                const matches = (chunkLower.match(new RegExp(`\\b${word}\\b`, 'gi')) || []).length;
+                score += matches * 3;
+                
+                // Partial matches (lower weight)
+                const partialMatches = (chunkLower.match(new RegExp(word, 'gi')) || []).length;
+                score += (partialMatches - matches) * 1;
             });
             
-            // Prefer earlier chunks (they often contain overview/intro)
-            score += (this.siteContent.chunks.length - index) * 0.1;
+            // Boost score for section headings
+            if (chunk.sectionHeading) {
+                const headingLower = chunk.sectionHeading.toLowerCase();
+                queryWords.forEach(word => {
+                    if (headingLower.includes(word)) {
+                        score += 5;
+                    }
+                });
+            }
             
-            return { chunk, score, index };
+            // Boost score for page title matches
+            if (chunk.pageTitle) {
+                const titleLower = chunk.pageTitle.toLowerCase();
+                queryWords.forEach(word => {
+                    if (titleLower.includes(word)) {
+                        score += 3;
+                    }
+                });
+            }
+            
+            return { ...chunk, score };
         });
         
         // Sort by score and return top K
         scoredChunks.sort((a, b) => b.score - a.score);
-        const topChunks = scoredChunks.slice(0, topK)
-            .filter(item => item.score > 0)
-            .map(item => item.chunk);
-        
-        return topChunks.join('\n\n---\n\n');
+        return scoredChunks
+            .slice(0, topK)
+            .filter(item => item.score > 0);
     }
 
-    async generateResponse(userMessage, context) {
-        // Client-side response generation using the content
-        // This is a simple rule-based system - for better results, use OpenAI API with a serverless function
-        
+    async generateResponse(userMessage) {
         const queryLower = userMessage.toLowerCase();
         
-        // Check for common questions
+        // Find relevant chunks
+        const relevantChunks = this.findRelevantChunks(userMessage, 5);
+        const context = relevantChunks.map(c => c.text).join('\n\n---\n\n');
+        
+        // Check for specific question types
         if (queryLower.includes('what is terpedia') || queryLower.includes('about terpedia')) {
-            return this.getTerpediaInfo();
+            return this.getTerpediaInfo(relevantChunks);
         }
         
         if (queryLower.includes('functional flavor') || queryLower.includes('what are functional flavors')) {
-            return this.getFunctionalFlavorsInfo(context);
+            return this.getFunctionalFlavorsInfo(relevantChunks, context);
         }
         
-        if (queryLower.includes('cinnamaldehyde') || queryLower.includes('cinnamon')) {
-            return this.getCompoundInfo('cinnamaldehyde', context);
+        if (queryLower.match(/\b(cinnamaldehyde|cinnamon)\b/i)) {
+            return this.getCompoundInfo('cinnamaldehyde', relevantChunks, context);
         }
         
-        if (queryLower.includes('eugenol')) {
-            return this.getCompoundInfo('eugenol', context);
+        if (queryLower.match(/\beugenol\b/i)) {
+            return this.getCompoundInfo('eugenol', relevantChunks, context);
         }
         
-        if (queryLower.includes('fda') || queryLower.includes('regulation')) {
-            return this.getRegulatoryInfo(context);
+        if (queryLower.match(/\b(fda|regulation|regulatory)\b/i)) {
+            return this.getRegulatoryInfo(relevantChunks, context);
         }
         
-        if (queryLower.includes('safety') || queryLower.includes('toxic')) {
-            return this.getSafetyInfo(context);
+        if (queryLower.match(/\b(safety|toxic|toxicity|safe)\b/i)) {
+            return this.getSafetyInfo(relevantChunks, context);
         }
         
         // Generic response using context
-        if (context) {
-            return this.generateContextualResponse(userMessage, context);
+        if (context && relevantChunks.length > 0) {
+            return this.generateContextualResponse(userMessage, relevantChunks, context);
         }
         
         // Fallback
-        return `I found some information that might help. Based on the site content, here's what I can tell you:\n\n${context ? context.substring(0, 500) + '...' : 'Please try rephrasing your question or browse the site using the navigation menu.'}`;
+        return `I couldn't find specific information about "${userMessage}" in the site content. 
+
+Try asking about:
+• Functional flavors and their mechanisms
+• Specific compounds (cinnamaldehyde, eugenol, linalool, etc.)
+• FDA regulations
+• Safety information
+• Terpedia
+
+Or browse the site using the navigation menu to find what you're looking for!`;
     }
 
-    getTerpediaInfo() {
-        return `**Terpedia** is a scientific repository for functional flavors research. It provides:
-
-• Comprehensive scientific articles on functional flavors
-• Detailed compound profiles with mechanisms of action
-• FDA regulatory information
-• Safety and toxicology data
-• Real-world examples (like the cinnamon roll analysis)
-
-Terpedia serves as an authoritative, evidence-based resource that bridges peer-reviewed research, regulatory frameworks, and practical applications. The platform is designed to make scientific information about functional flavors accessible to researchers, industry professionals, healthcare providers, and consumers.
-
-You can explore the site using the navigation menu or ask me specific questions about functional flavors!`;
-    }
-
-    getFunctionalFlavorsInfo(context) {
-        const intro = `**Functional flavors** are bioactive compounds found in natural foods and spices that extend beyond mere sensory perception. `;
+    getTerpediaInfo(chunks) {
+        const terpediaChunk = chunks.find(c => 
+            c.text.toLowerCase().includes('terpedia') && 
+            (c.text.toLowerCase().includes('repository') || c.text.toLowerCase().includes('scientific'))
+        );
         
-        if (context) {
-            const relevant = context.substring(0, 800);
-            return intro + `Here's what the site says:\n\n${relevant}...\n\nFor more details, check out the main article on the homepage.`;
+        if (terpediaChunk) {
+            return `**Terpedia** is a scientific repository for functional flavors research. Here's what the site says:\n\n${terpediaChunk.text.substring(0, 600)}...\n\nFor more information, check out the "About" page or the main article.`;
         }
         
-        return intro + `They include terpenes, aldehydes, and phenolic compounds that interact with human physiology through various mechanisms including receptor binding, enzymatic modulation, and cellular signaling pathways. Check out the main article for comprehensive information!`;
+        return `**Terpedia** is a scientific repository for functional flavors research. It provides comprehensive scientific articles, detailed compound profiles, FDA regulatory information, safety data, and real-world examples. The platform serves as an authoritative, evidence-based resource that bridges peer-reviewed research, regulatory frameworks, and practical applications.`;
     }
 
-    getCompoundInfo(compound, context) {
+    getFunctionalFlavorsInfo(chunks, context) {
+        const intro = `**Functional flavors** are bioactive compounds found in natural foods and spices that extend beyond mere sensory perception. `;
+        
+        if (chunks.length > 0) {
+            const bestChunk = chunks[0];
+            const excerpt = bestChunk.text.substring(0, 700);
+            const source = bestChunk.pageTitle ? `\n\n*Source: ${bestChunk.pageTitle}*` : '';
+            return intro + `Here's what the site says:\n\n${excerpt}...${source}\n\nFor complete information, check out the main article on the homepage.`;
+        }
+        
+        return intro + `They include terpenes, aldehydes, and phenolic compounds that interact with human physiology through various mechanisms. Check out the main article for comprehensive information!`;
+    }
+
+    getCompoundInfo(compound, chunks, context) {
         const compoundNames = {
             'cinnamaldehyde': 'Cinnamaldehyde',
             'eugenol': 'Eugenol'
         };
         
         const name = compoundNames[compound] || compound;
+        const compoundChunks = chunks.filter(c => 
+            c.text.toLowerCase().includes(compound.toLowerCase())
+        );
         
-        if (context) {
-            const relevant = context.substring(0, 600);
-            return `Here's information about **${name}** from the site:\n\n${relevant}...\n\nFor complete details, visit the compound's dedicated page in the "All Compounds" section.`;
+        if (compoundChunks.length > 0) {
+            const bestChunk = compoundChunks[0];
+            const excerpt = bestChunk.text.substring(0, 600);
+            const source = bestChunk.pageTitle ? `\n\n*Source: ${bestChunk.pageTitle}*` : '';
+            return `Here's information about **${name}** from the site:\n\n${excerpt}...${source}\n\nFor complete details, visit the compound's dedicated page in the "All Compounds" section.`;
         }
         
-        return `**${name}** is a functional flavor compound with various biological effects. For detailed information about its mechanisms, health effects, and safety, please visit the compound's page in the "All Compounds" section or check the main article.`;
+        return `**${name}** is a functional flavor compound with various biological effects. For detailed information about its mechanisms, health effects, and safety, please visit the compound's page in the "All Compounds" section.`;
     }
 
-    getRegulatoryInfo(context) {
-        if (context) {
-            const relevant = context.substring(0, 700);
-            return `Here's information about **FDA regulations** from the site:\n\n${relevant}...\n\nFor complete regulatory details, see the "FDA Regulations and Health Claims" section in the main article.`;
+    getRegulatoryInfo(chunks, context) {
+        const regulatoryChunks = chunks.filter(c => 
+            c.text.toLowerCase().includes('fda') || 
+            c.text.toLowerCase().includes('regulation') ||
+            c.text.toLowerCase().includes('claim')
+        );
+        
+        if (regulatoryChunks.length > 0) {
+            const bestChunk = regulatoryChunks[0];
+            const excerpt = bestChunk.text.substring(0, 700);
+            const source = bestChunk.pageTitle ? `\n\n*Source: ${bestChunk.pageTitle}*` : '';
+            return `Here's information about **FDA regulations** from the site:\n\n${excerpt}...${source}\n\nFor complete regulatory details, see the "FDA Regulations and Health Claims" section in the main article.`;
         }
         
-        return `The FDA distinguishes between different types of claims for functional flavors:
-• **Structure/function claims** - describe how a substance affects body structure/function
-• **Health claims** - require FDA pre-approval
-• **Qualified health claims** - require specific disclaimers
-
-Most functional flavor compounds have GRAS status for flavoring purposes. For detailed regulatory information, see the main article's "FDA Regulations" section.`;
+        return `The FDA distinguishes between different types of claims for functional flavors. For detailed regulatory information, see the main article's "FDA Regulations" section.`;
     }
 
-    getSafetyInfo(context) {
-        if (context) {
-            const relevant = context.substring(0, 700);
-            return `Here's **safety and toxicology** information from the site:\n\n${relevant}...\n\nFor comprehensive safety data, see the "Safety and Toxicology" section in the main article.`;
+    getSafetyInfo(chunks, context) {
+        const safetyChunks = chunks.filter(c => 
+            c.text.toLowerCase().includes('safety') || 
+            c.text.toLowerCase().includes('toxic') ||
+            c.text.toLowerCase().includes('ld50') ||
+            c.sectionHeading?.toLowerCase().includes('safety')
+        );
+        
+        if (safetyChunks.length > 0) {
+            const bestChunk = safetyChunks[0];
+            const excerpt = bestChunk.text.substring(0, 700);
+            const source = bestChunk.pageTitle ? `\n\n*Source: ${bestChunk.pageTitle}*` : '';
+            return `Here's **safety and toxicology** information from the site:\n\n${excerpt}...${source}\n\nFor comprehensive safety data, see the "Safety and Toxicology" section in the main article.`;
         }
         
-        return `Safety information for functional flavors includes:
-• Acute toxicity (LD50 values)
-• Chronic toxicity and carcinogenicity
-• Drug interactions
-• Special populations (pregnant women, children, elderly)
-• Regulatory safety assessments
-
-Most compounds are safe at typical dietary levels. For detailed safety information, see the "Safety and Toxicology" section in the main article.`;
+        return `Safety information for functional flavors includes acute toxicity, chronic effects, drug interactions, and special population considerations. For detailed safety information, see the "Safety and Toxicology" section in the main article.`;
     }
 
-    generateContextualResponse(query, context) {
-        // Extract the most relevant sentences
-        const sentences = context.match(/[^.!?]+[.!?]+/g) || [];
-        const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    generateContextualResponse(query, chunks, context) {
+        if (chunks.length === 0) {
+            return this.generateResponse(query); // Fallback
+        }
         
-        // Score sentences
-        const scoredSentences = sentences.map(sentence => {
-            const sentenceLower = sentence.toLowerCase();
-            let score = 0;
-            queryWords.forEach(word => {
-                if (sentenceLower.includes(word)) score++;
-            });
-            return { sentence, score };
-        });
+        // Use the best matching chunks
+        const topChunks = chunks.slice(0, 3);
+        const sources = [...new Set(topChunks.map(c => c.pageTitle).filter(Boolean))];
+        const sourceText = sources.length > 0 ? `\n\n*Sources: ${sources.join(', ')}*` : '';
         
-        scoredSentences.sort((a, b) => b.score - a.score);
-        const topSentences = scoredSentences.slice(0, 5).map(s => s.sentence).join(' ');
+        // Combine top chunks
+        const combinedText = topChunks.map(c => c.text).join('\n\n---\n\n');
+        const excerpt = combinedText.substring(0, 800);
         
-        return `Based on the site content, here's what I found:\n\n${topSentences}\n\nFor more complete information, please check the relevant sections in the article or use the table of contents to navigate directly.`;
+        return `Based on the site content, here's what I found:\n\n${excerpt}${excerpt.length < combinedText.length ? '...' : ''}${sourceText}\n\nFor more complete information, check the relevant sections in the article or use the table of contents to navigate directly.`;
     }
 
     createWidget() {
@@ -317,7 +298,7 @@ Most compounds are safe at typical dietary levels. For detailed safety informati
                             <li>Safety and toxicology information</li>
                             <li>General questions about Terpedia</li>
                         </ul>
-                        <p><strong>Note:</strong> I search the site content to answer your questions. For the best experience, try asking about topics covered in the articles!</p>
+                        <p><strong>Note:</strong> I search the published site content to answer your questions!</p>
                     </div>
                 </div>
                 <div class="chat-widget-input-container">
@@ -336,7 +317,7 @@ Most compounds are safe at typical dietary levels. For detailed safety informati
                     </button>
                 </div>
                 <div class="chat-widget-footer">
-                    <small>Powered by Terpedia • Client-Side RAG</small>
+                    <small>Powered by Terpedia • File-Based RAG</small>
                 </div>
             </div>
             <button class="chat-widget-toggle" id="chatToggleBtn" aria-label="Open chat">
@@ -397,11 +378,8 @@ Most compounds are safe at typical dietary levels. For detailed safety informati
         const loadingId = this.addMessage('assistant', 'Searching site content...', true);
 
         try {
-            // Find relevant context
-            const context = this.findRelevantContext(message);
-            
             // Generate response
-            const response = await this.generateResponse(message, context);
+            const response = await this.generateResponse(message);
             
             // Remove loading message
             this.removeMessage(loadingId);
@@ -493,7 +471,6 @@ Most compounds are safe at typical dietary levels. For detailed safety informati
             const saved = localStorage.getItem('terpedia_chat_history');
             if (saved) {
                 this.messages = JSON.parse(saved);
-                // Optionally restore last few messages to UI
             }
         } catch (e) {
             console.warn('Could not load chat history:', e);
