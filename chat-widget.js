@@ -6,9 +6,15 @@ class TerpediaChatWidget {
         this.isOpen = false;
         this.messages = [];
         // Use KB Terpedia chat API
-        this.apiEndpoint = 'https://kb.terpedia.com/chat'; // Main chat endpoint
-        // Fallback to OpenRouter-compatible endpoint if needed
-        this.openRouterEndpoint = 'https://kb.terpedia.com/v1/chat/completions';
+        // Try multiple possible endpoints
+        const possibleEndpoints = [
+            'https://kb.terpedia.com/chat',
+            'https://kb.terpedia.com:8000/chat',
+            'https://kb.terpedia.com/v1/chat/completions',
+            'http://kb.terpedia.com:8000/chat'
+        ];
+        this.apiEndpoint = possibleEndpoints[0]; // Primary endpoint
+        this.fallbackEndpoints = possibleEndpoints.slice(1);
         this.init();
     }
 
@@ -120,45 +126,68 @@ class TerpediaChatWidget {
         const loadingId = this.addMessage('assistant', 'Thinking...', true);
 
         try {
-            // Try main chat endpoint first
+            // Try endpoints in order
             let response;
-            try {
-                response = await fetch(this.apiEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        context: {
-                            conversation_history: this.messages.slice(-10), // Last 10 messages for context
-                            site: 'functional-flavors'
-                        }
-                    }),
-                });
-            } catch (error) {
-                // Fallback to OpenRouter-compatible endpoint
-                console.warn('Main endpoint failed, trying OpenRouter endpoint:', error);
-                response = await fetch(this.openRouterEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        model: 'terpedia/unified',
-                        messages: [
-                            ...this.messages.slice(-10).map(msg => ({
-                                role: msg.role,
-                                content: msg.content
-                            })),
-                            {
-                                role: 'user',
-                                content: message
+            let lastError;
+            const endpoints = [this.apiEndpoint, ...this.fallbackEndpoints];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    // Try main chat endpoint format first
+                    response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            context: {
+                                conversation_history: this.messages.slice(-10),
+                                site: 'functional-flavors'
                             }
-                        ],
-                        stream: false
-                    }),
-                });
+                        }),
+                    });
+                    
+                    if (response.ok) {
+                        break; // Success, exit loop
+                    }
+                } catch (error) {
+                    lastError = error;
+                    // Try OpenRouter format for /v1/chat/completions endpoints
+                    if (endpoint.includes('/v1/chat/completions')) {
+                        try {
+                            response = await fetch(endpoint, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    model: 'terpedia/unified',
+                                    messages: [
+                                        ...this.messages.slice(-10).map(msg => ({
+                                            role: msg.role,
+                                            content: msg.content
+                                        })),
+                                        {
+                                            role: 'user',
+                                            content: message
+                                        }
+                                    ],
+                                    stream: false
+                                }),
+                            });
+                            if (response.ok) {
+                                break; // Success
+                            }
+                        } catch (e) {
+                            lastError = e;
+                        }
+                    }
+                }
+            }
+            
+            if (!response || !response.ok) {
+                throw lastError || new Error(`All endpoints failed. Last status: ${response?.status}`);
             }
 
             if (!response.ok) {
