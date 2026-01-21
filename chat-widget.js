@@ -8,7 +8,12 @@ class TerpediaChatWidget {
         this.db = null;
         this.sqlite3 = null;
         this.initialized = false;
-        this.apiEndpoint = 'http://kb.terpedia.com:8000/chat'; // KB Terpedia API fallback
+        // Terpedia Chat API endpoints (HTTPS preferred, HTTP fallback)
+        this.apiEndpoints = [
+            'https://kb.terpedia.com/chat',
+            'https://kb.terpedia.com/v1/chat/completions',
+            'http://kb.terpedia.com:8000/chat'
+        ];
         this.init();
     }
 
@@ -41,20 +46,20 @@ class TerpediaChatWidget {
                     sql: "SELECT * FROM chunks_fts LIMIT 1",
                     returnValue: 'resultRows'
                 });
-                console.log('✓ Database loaded with FTS5 full-text search');
+                console.log('✓ Local database loaded (available as fallback)');
             } catch (e) {
-                console.log('⚠ FTS5 not available, using keyword search');
+                console.log('⚠ FTS5 not available in local database');
             }
             
             // Future: Load sqlite-vec extension for vector search
             // await this.loadSQLiteVecExtension();
             
             this.initialized = true;
-            this.updateStatus('✓ Knowledge base loaded and ready!', 'success');
+            this.updateStatus('✓ Connected to Terpedia Chat', 'success');
         } catch (error) {
-            console.warn('Could not load SQLite database:', error);
+            console.warn('Could not load local database (using Terpedia API only):', error);
             this.initialized = false;
-            this.updateStatus('⚠ Using API fallback (database not available)', 'warning');
+            this.updateStatus('✓ Connected to Terpedia Chat', 'success');
         }
     }
 
@@ -241,53 +246,81 @@ class TerpediaChatWidget {
     }
 
     async generateResponse(userMessage) {
-        // Try vector/keyword search first if database is loaded
-        if (this.initialized && this.db) {
-            const relevantChunks = await this.findRelevantChunks(userMessage, 5);
+        // Primary: Use Terpedia Chat LLM API
+        try {
+            return await this.callTerpediaAPI(userMessage);
+        } catch (error) {
+            console.warn('Terpedia API failed, trying local search:', error);
             
-            if (relevantChunks.length > 0) {
-                const context = relevantChunks.map(c => c.chunk_text).join('\n\n---\n\n');
-                return this.generateContextualResponse(userMessage, relevantChunks, context);
+            // Fallback: Try local SQLite search if available
+            if (this.initialized && this.db) {
+                const relevantChunks = await this.findRelevantChunks(userMessage, 5);
+                
+                if (relevantChunks.length > 0) {
+                    const context = relevantChunks.map(c => c.chunk_text).join('\n\n---\n\n');
+                    return this.generateContextualResponse(userMessage, relevantChunks, context);
+                }
+            }
+            
+            // If all else fails, throw the original error
+            throw error;
+        }
+    }
+
+    async callTerpediaAPI(userMessage) {
+        // Try each endpoint until one works
+        let lastError = null;
+        
+        for (const endpoint of this.apiEndpoints) {
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        context: {
+                            conversation_history: this.messages.slice(-10).map(m => ({
+                                role: m.role,
+                                content: m.content
+                            })),
+                            site: 'functional-flavors',
+                            page_url: window.location.href,
+                            page_title: document.title
+                        }
+                    }),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Handle different response formats
+                if (data.response) {
+                    return data.response;
+                } else if (data.message) {
+                    return data.message;
+                } else if (data.choices && data.choices[0] && data.choices[0].message) {
+                    // OpenAI-compatible format
+                    return data.choices[0].message.content;
+                } else if (typeof data === 'string') {
+                    return data;
+                } else {
+                    return JSON.stringify(data);
+                }
+            } catch (error) {
+                console.warn(`Failed to call ${endpoint}:`, error);
+                lastError = error;
+                // Continue to next endpoint
+                continue;
             }
         }
         
-        // Fallback to API
-        return await this.callAPI(userMessage);
-    }
-
-    async callAPI(userMessage) {
-        try {
-            const response = await fetch(this.apiEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: userMessage,
-                    context: {
-                        conversation_history: this.messages.slice(-10),
-                        site: 'functional-flavors'
-                    }
-                }),
-            });
-            
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            return data.response || data.message || JSON.stringify(data);
-        } catch (error) {
-            // If API fails and we have database, try harder with database
-            if (this.initialized && this.db) {
-                const chunks = await this.findRelevantChunks(userMessage, 10);
-                if (chunks.length > 0) {
-                    return this.generateContextualResponse(userMessage, chunks, 
-                        chunks.map(c => c.chunk_text).join('\n\n'));
-                }
-            }
-            throw error;
-        }
+        // All endpoints failed
+        throw new Error(`All Terpedia API endpoints failed. Last error: ${lastError?.message || 'Unknown error'}`);
     }
 
     generateContextualResponse(query, chunks, context) {
@@ -312,21 +345,22 @@ class TerpediaChatWidget {
         widget.innerHTML = `
             <div class="chat-widget-container" id="chatContainer">
                 <div class="chat-widget-header">
-                    <h3>Terpedia Assistant</h3>
-                    <p class="chat-subtitle">Ask questions about functional flavors or Terpedia</p>
+                    <h3>Terpedia Chat</h3>
+                    <p class="chat-subtitle">Powered by Terpedia Knowledge Base</p>
                     <button class="chat-close-btn" id="chatCloseBtn" aria-label="Close chat">×</button>
                 </div>
                 <div class="chat-widget-messages" id="chatMessages">
                     <div class="chat-welcome">
-                        <p>👋 Hello! I'm the Terpedia Assistant. I can help you with:</p>
+                        <p>👋 Hello! I'm Terpedia Chat, powered by the Terpedia Knowledge Base. I can help you with:</p>
                         <ul>
                             <li>Questions about functional flavors and their mechanisms</li>
-                            <li>Information about specific compounds</li>
+                            <li>Information about terpenes, essential oils, and compounds</li>
+                            <li>Molecular properties and protein interactions</li>
+                            <li>SPARQL queries on the knowledge base</li>
                             <li>FDA regulations and health claims</li>
                             <li>Safety and toxicology information</li>
-                            <li>General questions about Terpedia</li>
                         </ul>
-                        <p id="dbStatus">Loading knowledge base...</p>
+                        <p id="dbStatus">Connecting to Terpedia Chat...</p>
                     </div>
                 </div>
                 <div class="chat-widget-input-container">
