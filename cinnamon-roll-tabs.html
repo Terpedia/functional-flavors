@@ -90,10 +90,10 @@
             
             <div class="tabs-container">
                 <div class="tabs">
-                    <button class="tab-button active" onclick="showTab('overview')">Overview</button>
-                    <button class="tab-button" onclick="showTab('coa')">GCMS CoA</button>
-                    <button class="tab-button" onclick="showTab('ingredients')">Ingredients</button>
-                    <button class="tab-button" onclick="showTab('compounds')">Compounds</button>
+                    <button class="tab-button active" onclick="showTab('overview', event)">Overview</button>
+                    <button class="tab-button" onclick="showTab('coa', event)">GCMS CoA</button>
+                    <button class="tab-button" onclick="showTab('ingredients', event)">Ingredients</button>
+                    <button class="tab-button" onclick="showTab('compounds', event)">Compounds</button>
                 </div>
 
                 <!-- Overview Tab -->
@@ -958,7 +958,7 @@
 
     <script>
         // Tab functionality
-        function showTab(tabName) {
+        function showTab(tabName, event) {
             // Hide all tab contents
             const tabContents = document.querySelectorAll('.tab-content');
             tabContents.forEach(content => {
@@ -975,7 +975,23 @@
             document.getElementById(tabName).classList.add('active');
 
             // Add active class to clicked button
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback: find button by text content
+                const buttons = document.querySelectorAll('.tab-button');
+                buttons.forEach(button => {
+                    if (button.textContent.trim() === 'Overview' && tabName === 'overview') {
+                        button.classList.add('active');
+                    } else if (button.textContent.trim() === 'GCMS CoA' && tabName === 'coa') {
+                        button.classList.add('active');
+                    } else if (button.textContent.trim() === 'Ingredients' && tabName === 'ingredients') {
+                        button.classList.add('active');
+                    } else if (button.textContent.trim() === 'Compounds' && tabName === 'compounds') {
+                        button.classList.add('active');
+                    }
+                });
+            }
         }
 
         // Set current date

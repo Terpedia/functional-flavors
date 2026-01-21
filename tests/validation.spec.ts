@@ -5,8 +5,7 @@ import { join } from 'path';
 // List of all expected pages
 const pages = [
   { path: 'index.html', title: 'Terpedia - Functional Flavors Research' },
-  { path: 'cinnamon-roll.html', title: 'Cinnamon Roll - Functional Flavors | Terpedia' },
-  { path: 'coa.html', title: 'GCMS Certificate of Analysis - Cinnamon Roll | Terpedia' },
+  { path: 'cinnamon-roll-tabs.html', title: 'Cinnamon Roll - Functional Flavors | Terpedia' },
   { path: 'compounds.html', title: 'All Compounds - Terpedia' },
 ];
 
@@ -43,49 +42,70 @@ test.describe('Terpedia Site Validation', () => {
     await expect(page.locator('h2')).toContainText('Functional Flavors');
   });
 
-  test('Cinnamon Roll page loads and has compound cards', async ({ page }) => {
-    await page.goto('file://' + join(process.cwd(), 'cinnamon-roll.html'));
+  test('Cinnamon Roll page loads and has tabs', async ({ page }) => {
+    await page.goto('file://' + join(process.cwd(), 'cinnamon-roll-tabs.html'));
     await expect(page).toHaveTitle(/Cinnamon Roll/);
     
-    // Check for compound cards
-    const compoundCards = page.locator('.compound-card');
+    // Check for tabs
+    const tabButtons = page.locator('.tab-button');
+    await expect(tabButtons).toHaveCount(4);
+    await expect(page.locator('.tab-button:has-text("Overview")')).toBeVisible();
+    await expect(page.locator('.tab-button:has-text("GCMS CoA")')).toBeVisible();
+    await expect(page.locator('.tab-button:has-text("Ingredients")')).toBeVisible();
+    await expect(page.locator('.tab-button:has-text("Compounds")')).toBeVisible();
+    
+    // Check that overview tab is active by default
+    await expect(page.locator('#overview.tab-content.active')).toBeVisible();
+    
+    // Check for compound cards in overview tab (within active tab)
+    const overviewTab = page.locator('#overview.tab-content.active');
+    const compoundCards = overviewTab.locator('.compound-card');
     await expect(compoundCards).toHaveCount(6);
     
     // Check that all expected compounds are present
     for (const compound of ['Cinnamaldehyde', 'Eugenol', 'Linalool', 'Vanillin', 'Coumarin', 'Cinnamyl Acetate']) {
-      await expect(page.locator('text=' + compound).first()).toBeVisible();
+      await expect(overviewTab.getByText(compound).first()).toBeVisible();
     }
   });
 
-  test('GCMS CoA page has correct structure', async ({ page }) => {
-    await page.goto('file://' + join(process.cwd(), 'coa.html'));
-    await expect(page).toHaveTitle(/GCMS Certificate of Analysis/);
+  test('GCMS CoA tab has correct structure', async ({ page }) => {
+    await page.goto('file://' + join(process.cwd(), 'cinnamon-roll-tabs.html'));
     
-    // Check header elements
-    await expect(page.locator('.coa-logo h2')).toContainText('TERPEDIA');
-    await expect(page.locator('.coa-title h1')).toContainText('CERTIFICATE OF ANALYSIS');
+    // Click on GCMS CoA tab
+    await page.locator('button:has-text("GCMS CoA")').click();
+    await page.waitForTimeout(500); // Wait for tab switch animation
     
-    // Check certificate info table
-    await expect(page.locator('text=Certificate No.')).toBeVisible();
-    await expect(page.locator('text=TP-2024-001')).toBeVisible();
-    await expect(page.locator('text=Sample Name')).toBeVisible();
-    await expect(page.locator('text=Cinnamon Roll Flavor Profile')).toBeVisible();
+    // Verify CoA tab is now active
+    await expect(page.locator('#coa.tab-content.active')).toBeVisible();
+    
+    // Get reference to active CoA tab
+    const coaTab = page.locator('#coa.tab-content.active');
+    
+    // Check header elements (within active tab)
+    await expect(coaTab.locator('.coa-logo h2')).toContainText('TERPEDIA');
+    await expect(coaTab.locator('.coa-title h1')).toContainText('CERTIFICATE OF ANALYSIS');
+    
+    // Check certificate info table (within active tab)
+    await expect(coaTab.locator('text=Certificate No.')).toBeVisible();
+    await expect(coaTab.locator('text=TP-2024-001')).toBeVisible();
+    await expect(coaTab.locator('text=Sample Name')).toBeVisible();
+    await expect(coaTab.locator('text=Cinnamon Roll Flavor Profile')).toBeVisible();
     
     // Check results table exists
-    const coaTable = page.locator('.coa-table');
+    const coaTable = coaTab.locator('.coa-table');
     await expect(coaTable).toBeVisible();
     
-    // Check table headers
-    await expect(page.locator('th:has-text("Compound Name")')).toBeVisible();
-    await expect(page.locator('th:has-text("CAS Number")')).toBeVisible();
-    await expect(page.locator('th:has-text("RT (min)")')).toBeVisible();
-    await expect(page.locator('th:has-text("Area %")')).toBeVisible();
-    await expect(page.locator('th:has-text("Concentration")')).toBeVisible();
-    await expect(page.locator('th:has-text("Match Quality")')).toBeVisible();
+    // Check table headers (within active tab)
+    await expect(coaTab.locator('th:has-text("Compound Name")')).toBeVisible();
+    await expect(coaTab.locator('th:has-text("CAS Number")')).toBeVisible();
+    await expect(coaTab.locator('th:has-text("RT (min)")')).toBeVisible();
+    await expect(coaTab.locator('th:has-text("Area %")')).toBeVisible();
+    await expect(coaTab.locator('th:has-text("Concentration")')).toBeVisible();
+    await expect(coaTab.locator('th:has-text("Match Quality")')).toBeVisible();
     
     // Check that all expected compounds are in the table
     for (const compound of coaCompounds) {
-      const row = page.locator(`tr:has-text("${compound}")`);
+      const row = coaTab.locator(`tr:has-text("${compound}")`);
       await expect(row).toBeVisible();
       
       // Check that compound has a link
@@ -95,19 +115,26 @@ test.describe('Terpedia Site Validation', () => {
     }
     
     // Check total row
-    await expect(page.locator('text=Total Identified')).toBeVisible();
+    await expect(coaTab.locator('text=Total Identified')).toBeVisible();
     
     // Check notes section
-    await expect(page.locator('h3:has-text("Notes")')).toBeVisible();
+    await expect(coaTab.locator('h3:has-text("Notes")')).toBeVisible();
     
     // Check signature section
-    const signatureSection = page.locator('.coa-signature');
+    const signatureSection = coaTab.locator('.coa-signature');
     await expect(signatureSection.getByText('Analyst', { exact: true }).first()).toBeVisible();
     await expect(signatureSection.getByText('Approved By', { exact: true }).first()).toBeVisible();
   });
 
   test('CoA table has correct data structure', async ({ page }) => {
-    await page.goto('file://' + join(process.cwd(), 'coa.html'));
+    await page.goto('file://' + join(process.cwd(), 'cinnamon-roll-tabs.html'));
+    
+    // Click on GCMS CoA tab
+    await page.locator('.tab-button:has-text("GCMS CoA")').click();
+    await page.waitForTimeout(500); // Wait for tab switch animation
+    
+    // Verify CoA tab is active
+    await expect(page.locator('#coa.tab-content.active')).toBeVisible();
     
     const table = page.locator('.coa-table tbody');
     const rows = table.locator('tr');
@@ -159,7 +186,7 @@ test.describe('Terpedia Site Validation', () => {
       await expect(page.locator('h3:has-text("References")')).toBeVisible();
       
       // Check navigation links back
-      await expect(page.locator('nav a[href="../cinnamon-roll.html"]')).toBeVisible();
+      await expect(page.locator('nav a[href="../cinnamon-roll-tabs.html"]')).toBeVisible();
       await expect(page.locator('nav a[href="../compounds.html"]')).toBeVisible();
     }
   });
@@ -169,12 +196,17 @@ test.describe('Terpedia Site Validation', () => {
     await page.goto('file://' + join(process.cwd(), 'index.html'));
     
     // Test navigation to Cinnamon Roll
-    await page.click('a[href="cinnamon-roll.html"]');
-    await expect(page).toHaveURL(/cinnamon-roll\.html/);
+    await page.click('a[href="cinnamon-roll-tabs.html"]');
+    await expect(page).toHaveURL(/cinnamon-roll-tabs\.html/);
     
-    // Test navigation to CoA
-    await page.click('a[href="coa.html"]');
-    await expect(page).toHaveURL(/coa\.html/);
+    // Test tab switching
+    await page.locator('.tab-button:has-text("GCMS CoA")').click();
+    await page.waitForTimeout(500);
+    await expect(page.locator('#coa.tab-content.active')).toBeVisible();
+    
+    await page.locator('.tab-button:has-text("Ingredients")').click();
+    await page.waitForTimeout(500);
+    await expect(page.locator('#ingredients.tab-content.active')).toBeVisible();
     
     // Test navigation to Compounds
     await page.click('a[href="compounds.html"]');
@@ -186,7 +218,14 @@ test.describe('Terpedia Site Validation', () => {
   });
 
   test('CoA links to compound pages work', async ({ page }) => {
-    await page.goto('file://' + join(process.cwd(), 'coa.html'));
+    await page.goto('file://' + join(process.cwd(), 'cinnamon-roll-tabs.html'));
+    
+    // Click on GCMS CoA tab
+    await page.getByText('GCMS CoA').click();
+    await page.waitForTimeout(500);
+    
+    // Verify CoA tab is active
+    await expect(page.locator('#coa.tab-content.active')).toBeVisible();
     
     // Click on Cinnamaldehyde link
     const cinnamaldehydeLink = page.locator('a[href="compounds/cinnamaldehyde.html"]').first();
@@ -197,7 +236,10 @@ test.describe('Terpedia Site Validation', () => {
     
     // Go back and test another link
     await page.goBack();
-    const eugenolLink = page.locator('a[href="compounds/eugenol.html"]').first();
+    await page.locator('.tab-button:has-text("GCMS CoA")').click();
+    await page.waitForTimeout(500);
+    const coaTab2 = page.locator('#coa.tab-content.active');
+    const eugenolLink = coaTab2.locator('a[href="compounds/eugenol.html"]').first();
     await expect(eugenolLink).toBeVisible();
     await eugenolLink.click();
     await expect(page).toHaveURL(/eugenol\.html/);
@@ -220,8 +262,7 @@ test.describe('Terpedia Site Validation', () => {
   test('All HTML files have proper structure', async ({ page }) => {
     const htmlFiles = [
       'index.html',
-      'cinnamon-roll.html',
-      'coa.html',
+      'cinnamon-roll-tabs.html',
       'compounds.html',
       ...compoundPages.map(cp => cp.path),
     ];
@@ -247,26 +288,31 @@ test.describe('Terpedia Site Validation', () => {
     }
   });
 
-  test('CoA page has current date script', async ({ page }) => {
-    await page.goto('file://' + join(process.cwd(), 'coa.html'));
+  test('CoA tab has current date script', async ({ page }) => {
+    await page.goto('file://' + join(process.cwd(), 'cinnamon-roll-tabs.html'));
     
-    // Wait for script to execute
+    // Click on GCMS CoA tab
+    await page.locator('button:has-text("GCMS CoA")').click();
     await page.waitForTimeout(500);
+    
+    // Verify CoA tab is active
+    await expect(page.locator('#coa.tab-content.active')).toBeVisible();
     
     // Check that date element has content
     const dateElement = page.locator('#current-date');
+    await expect(dateElement).toBeVisible();
     const dateText = await dateElement.textContent();
     expect(dateText).toBeTruthy();
     expect(dateText?.length).toBeGreaterThan(0);
   });
 
-  test('All compound pages have navigation to CoA', async ({ page }) => {
+  test('All compound pages have navigation to Cinnamon Roll', async ({ page }) => {
     for (const compound of compoundPages) {
       await page.goto('file://' + join(process.cwd(), compound.path));
       
-      // Check for CoA link in navigation
-      const coaLink = page.locator('a[href="../coa.html"]');
-      await expect(coaLink).toBeVisible();
+      // Check for Cinnamon Roll link in navigation (should be first match in nav)
+      const cinnamonRollLink = page.locator('nav a[href="../cinnamon-roll-tabs.html"]').first();
+      await expect(cinnamonRollLink).toBeVisible();
     }
   });
 });
