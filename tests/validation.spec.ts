@@ -112,8 +112,9 @@ test.describe('Terpedia Site Validation', () => {
     const table = page.locator('.coa-table tbody');
     const rows = table.locator('tr');
     
-    // Should have at least 6 compound rows + 1 total row
-    await expect(rows).toHaveCount(11); // 10 compounds + 1 total row
+    // Should have compound rows + 1 total row (updated count with new compounds)
+    const rowCount = await rows.count();
+    expect(rowCount).toBeGreaterThanOrEqual(15); // At least 14 compounds + 1 total row
     
     // Check first compound row (Cinnamaldehyde)
     const firstRow = rows.first();
