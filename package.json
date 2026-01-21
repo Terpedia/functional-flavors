@@ -8,7 +8,12 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "build:rag": "node scripts/build-rag.js",
+    "build:rag:sqlite": "node scripts/build-rag-sqlite.js",
     "dev:api": "node api/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "openai": "^4.104.0"
   },
   "keywords": [],
   "author": "",

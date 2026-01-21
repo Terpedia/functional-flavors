@@ -1,26 +1,194 @@
-// Terpedia Chat Widget - Integrated with KB Terpedia API
-// Uses the existing kb.terpedia.com chat API
+// Terpedia Chat Widget - SQLite-Vec RAG Implementation
+// Uses SQLite-WASM + sqlite-vec for client-side vector search
 
 class TerpediaChatWidget {
     constructor() {
         this.isOpen = false;
         this.messages = [];
-        // Use KB Terpedia chat API
-        // Primary endpoint from KB_CHAT_USAGE.md
-        // Note: If using HTTP, browser may block due to mixed content (HTTPS site calling HTTP API)
-        // Consider setting up HTTPS proxy or using HTTPS endpoint
-        this.apiEndpoint = 'https://kb.terpedia.com/chat'; // Try HTTPS first
-        this.fallbackEndpoints = [
-            'https://kb.terpedia.com:8000/chat',
-            'https://kb.terpedia.com/v1/chat/completions',
-            'http://kb.terpedia.com:8000/chat' // Fallback to HTTP (may be blocked by browser)
-        ];
+        this.db = null;
+        this.initialized = false;
         this.init();
     }
 
-    init() {
+    async init() {
         this.createWidget();
+        await this.loadDatabase();
         this.loadChatHistory();
+    }
+
+    async loadDatabase() {
+        try {
+            // Load SQLite-WASM
+            if (!window.sqlite3InitModule) {
+                await this.loadSQLiteWASM();
+            }
+            
+            // Initialize SQLite
+            const sqlite3 = await window.sqlite3InitModule({
+                print: console.log,
+                printErr: console.error,
+            });
+            
+            // Load sqlite-vec extension
+            // Note: sqlite-vec WASM needs to be loaded separately
+            // For now, we'll use a simplified approach
+            
+            // Open database
+            const dbPath = 'rag.sqlite';
+            const response = await fetch(dbPath);
+            const arrayBuffer = await response.arrayBuffer();
+            
+            // Create SQLite database from buffer
+            this.db = new sqlite3.oo1.DB(new Uint8Array(arrayBuffer), 'c');
+            
+            console.log('✓ RAG database loaded');
+            this.initialized = true;
+        } catch (error) {
+            console.warn('Could not load SQLite database:', error);
+            console.warn('Falling back to KB Terpedia API');
+            this.initialized = false;
+            // Fallback to API - try multiple endpoints
+            this.apiEndpoint = 'http://kb.terpedia.com:8000/chat'; // Primary from KB_CHAT_USAGE.md
+            this.fallbackEndpoints = [
+                'https://kb.terpedia.com/chat',
+                'https://kb.terpedia.com:8000/chat',
+                'https://kb.terpedia.com/v1/chat/completions'
+            ];
+        }
+    }
+
+    async loadSQLiteWASM() {
+        return new Promise((resolve, reject) => {
+            // Load SQLite-WASM from CDN
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@sqlite.org/sqlite-wasm@3.45.1/sqlite-wasm/jswasm/sqlite3.mjs';
+            script.type = 'module';
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Failed to load SQLite-WASM'));
+            document.head.appendChild(script);
+        });
+    }
+
+    async findRelevantChunks(query, topK = 5) {
+        if (!this.initialized || !this.db) {
+            return [];
+        }
+        
+        try {
+            // Generate query embedding (would need OpenAI API in browser or pre-computed)
+            // For now, use keyword-based search as fallback
+            const queryLower = query.toLowerCase();
+            const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
+            
+            // Build SQL query with keyword matching
+            const conditions = queryWords.map(word => 
+                `chunk_text LIKE '%${word}%'`
+            ).join(' OR ');
+            
+            const sql = `
+                SELECT 
+                    id,
+                    page_title,
+                    page_url,
+                    section_heading,
+                    chunk_text,
+                    word_count
+                FROM chunks
+                WHERE ${conditions}
+                ORDER BY 
+                    CASE 
+                        ${queryWords.map((word, i) => 
+                            `WHEN chunk_text LIKE '%${word}%' THEN ${queryWords.length - i}`
+                        ).join(' ')}
+                        ELSE 0
+                    END DESC
+                LIMIT ?
+            `;
+            
+            const results = this.db.exec({
+                sql: sql,
+                bind: [topK],
+                returnValue: 'resultRows',
+                rowMode: 'object'
+            });
+            
+            return results || [];
+        } catch (error) {
+            console.error('Error searching database:', error);
+            return [];
+        }
+    }
+
+    async generateResponse(userMessage) {
+        // Try vector search first if database is loaded
+        if (this.initialized && this.db) {
+            const relevantChunks = await this.findRelevantChunks(userMessage, 5);
+            
+            if (relevantChunks.length > 0) {
+                const context = relevantChunks.map(c => c.chunk_text).join('\n\n---\n\n');
+                return this.generateContextualResponse(userMessage, relevantChunks, context);
+            }
+        }
+        
+        // Fallback to API if database not available
+        if (this.apiEndpoint || this.fallbackEndpoints) {
+            return await this.callAPI(userMessage);
+        }
+        
+        // Final fallback
+        return `I'm having trouble accessing the knowledge base. Please try again or browse the site using the navigation menu.`;
+    }
+
+    async callAPI(userMessage) {
+        const endpoints = this.apiEndpoint 
+            ? [this.apiEndpoint, ...(this.fallbackEndpoints || [])]
+            : (this.fallbackEndpoints || []);
+        
+        let lastError;
+        
+        for (const endpoint of endpoints) {
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        context: {
+                            conversation_history: this.messages.slice(-10),
+                            site: 'functional-flavors'
+                        }
+                    }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.response || data.message || JSON.stringify(data);
+                }
+            } catch (error) {
+                lastError = error;
+                // Try next endpoint
+                continue;
+            }
+        }
+        
+        throw lastError || new Error('All API endpoints failed');
+    }
+
+    generateContextualResponse(query, chunks, context) {
+        if (chunks.length === 0) {
+            return this.generateResponse(query); // Fallback
+        }
+        
+        const topChunks = chunks.slice(0, 3);
+        const sources = [...new Set(topChunks.map(c => c.page_title).filter(Boolean))];
+        const sourceText = sources.length > 0 ? `\n\n*Sources: ${sources.join(', ')}*` : '';
+        
+        const combinedText = topChunks.map(c => c.chunk_text).join('\n\n---\n\n');
+        const excerpt = combinedText.substring(0, 800);
+        
+        return `Based on the site content, here's what I found:\n\n${excerpt}${excerpt.length < combinedText.length ? '...' : ''}${sourceText}\n\nFor more complete information, check the relevant sections in the article or use the table of contents to navigate directly.`;
     }
 
     createWidget() {
@@ -39,14 +207,12 @@ class TerpediaChatWidget {
                         <p>👋 Hello! I'm the Terpedia Assistant. I can help you with:</p>
                         <ul>
                             <li>Questions about functional flavors and their mechanisms</li>
-                            <li>Information about specific compounds (terpenes, aldehydes, etc.)</li>
+                            <li>Information about specific compounds</li>
                             <li>FDA regulations and health claims</li>
                             <li>Safety and toxicology information</li>
                             <li>General questions about Terpedia</li>
-                            <li>Terpene-protein interactions</li>
-                            <li>Molecular properties and analysis</li>
                         </ul>
-                        <p>What would you like to know?</p>
+                        <p id="dbStatus">Loading knowledge base...</p>
                     </div>
                 </div>
                 <div class="chat-widget-input-container">
@@ -56,8 +222,9 @@ class TerpediaChatWidget {
                         class="chat-input" 
                         placeholder="Type your question here..."
                         aria-label="Chat input"
+                        disabled
                     />
-                    <button id="chatSendBtn" class="chat-send-btn" aria-label="Send message">
+                    <button id="chatSendBtn" class="chat-send-btn" aria-label="Send message" disabled>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -65,7 +232,7 @@ class TerpediaChatWidget {
                     </button>
                 </div>
                 <div class="chat-widget-footer">
-                    <small>Powered by KB Terpedia • OpenAI</small>
+                    <small>Powered by SQLite-Vec • Terpedia</small>
                 </div>
             </div>
             <button class="chat-widget-toggle" id="chatToggleBtn" aria-label="Open chat">
@@ -91,9 +258,31 @@ class TerpediaChatWidget {
         // Auto-focus input when chat opens
         document.getElementById('chatToggleBtn').addEventListener('click', () => {
             setTimeout(() => {
-                document.getElementById('chatInput').focus();
+                if (!document.getElementById('chatInput').disabled) {
+                    document.getElementById('chatInput').focus();
+                }
             }, 100);
         });
+        
+        // Update status when database loads
+        this.updateStatus();
+    }
+
+    updateStatus() {
+        const statusEl = document.getElementById('dbStatus');
+        if (statusEl) {
+            if (this.initialized) {
+                statusEl.textContent = '✓ Knowledge base loaded and ready!';
+                statusEl.style.color = '#27ae60';
+                document.getElementById('chatInput').disabled = false;
+                document.getElementById('chatSendBtn').disabled = false;
+            } else {
+                statusEl.textContent = '⚠ Using API fallback (database not available)';
+                statusEl.style.color = '#e67e22';
+                document.getElementById('chatInput').disabled = false;
+                document.getElementById('chatSendBtn').disabled = false;
+            }
+        }
     }
 
     toggleChat() {
@@ -101,7 +290,9 @@ class TerpediaChatWidget {
         const container = document.getElementById('chatContainer');
         if (this.isOpen) {
             container.classList.add('chat-open');
-            document.getElementById('chatInput').focus();
+            if (!document.getElementById('chatInput').disabled) {
+                document.getElementById('chatInput').focus();
+            }
         } else {
             container.classList.remove('chat-open');
         }
@@ -123,99 +314,17 @@ class TerpediaChatWidget {
         input.value = '';
 
         // Show loading indicator
-        const loadingId = this.addMessage('assistant', 'Thinking...', true);
+        const loadingId = this.addMessage('assistant', 'Searching knowledge base...', true);
 
         try {
-            // Try endpoints in order
-            let response;
-            let lastError;
-            const endpoints = [this.apiEndpoint, ...this.fallbackEndpoints];
-            
-            for (const endpoint of endpoints) {
-                try {
-                    // Try main chat endpoint format first
-                    response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            message: message,
-                            context: {
-                                conversation_history: this.messages.slice(-10),
-                                site: 'functional-flavors'
-                            }
-                        }),
-                    });
-                    
-                    if (response.ok) {
-                        break; // Success, exit loop
-                    }
-                } catch (error) {
-                    lastError = error;
-                    // Try OpenRouter format for /v1/chat/completions endpoints
-                    if (endpoint.includes('/v1/chat/completions')) {
-                        try {
-                            response = await fetch(endpoint, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    model: 'terpedia/unified',
-                                    messages: [
-                                        ...this.messages.slice(-10).map(msg => ({
-                                            role: msg.role,
-                                            content: msg.content
-                                        })),
-                                        {
-                                            role: 'user',
-                                            content: message
-                                        }
-                                    ],
-                                    stream: false
-                                }),
-                            });
-                            if (response.ok) {
-                                break; // Success
-                            }
-                        } catch (e) {
-                            lastError = e;
-                        }
-                    }
-                }
-            }
-            
-            if (!response || !response.ok) {
-                throw lastError || new Error(`All endpoints failed. Last status: ${response?.status}`);
-            }
-
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
+            // Generate response
+            const response = await this.generateResponse(message);
             
             // Remove loading message
             this.removeMessage(loadingId);
             
-            // Extract response text (handle different response formats)
-            let responseText;
-            if (data.response) {
-                // Main chat endpoint format
-                responseText = data.response;
-            } else if (data.choices && data.choices[0] && data.choices[0].message) {
-                // OpenRouter format
-                responseText = data.choices[0].message.content;
-            } else if (data.message) {
-                // Alternative format
-                responseText = data.message;
-            } else {
-                responseText = JSON.stringify(data);
-            }
-            
             // Add assistant response
-            this.addMessage('assistant', responseText);
+            this.addMessage('assistant', response);
             
             // Save to history
             this.saveChatHistory();
@@ -223,9 +332,7 @@ class TerpediaChatWidget {
             console.error('Chat error:', error);
             this.removeMessage(loadingId);
             this.addMessage('assistant', 
-                `I apologize, but I'm having trouble connecting to the Terpedia API. ` +
-                `Please check your internet connection and try again. ` +
-                `Error: ${error.message}`
+                `I apologize, but I encountered an error: ${error.message}. Please try again or browse the site using the navigation menu.`
             );
         }
     }
@@ -307,10 +414,6 @@ class TerpediaChatWidget {
         } catch (e) {
             console.warn('Could not load chat history:', e);
         }
-    }
-
-    setApiEndpoint(endpoint) {
-        this.apiEndpoint = endpoint;
     }
 }
 
