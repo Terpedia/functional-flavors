@@ -1668,23 +1668,7 @@
         });
     </script>
     
-    <!-- Chat Widget -->
+    <!-- Chat Widget - Client-Side RAG (Works Statically) -->
     <script src="chat-widget.js"></script>
-    <script>
-        // Configure chat API endpoint
-        // For production, set this to your actual API endpoint
-        // Example: window.terpediaChat.setApiEndpoint('https://api.terpedia.com/chat');
-        
-        // For development/testing, you can use a local endpoint or mock
-        // The widget will show an error message if the endpoint is not available
-        if (window.terpediaChat) {
-            // Set API endpoint - update this with your actual backend URL
-            const apiEndpoint = window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000/api/chat'  // Local development
-                : 'https://api.terpedia.com/chat';   // Production (update with your actual endpoint)
-            
-            window.terpediaChat.setApiEndpoint(apiEndpoint);
-        }
-    </script>
 </body>
 </html>

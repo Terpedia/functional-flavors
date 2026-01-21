@@ -212,15 +212,7 @@
         </div>
     </footer>
     
-    <!-- Chat Widget -->
+    <!-- Chat Widget - Client-Side RAG (Works Statically) -->
     <script src="chat-widget.js"></script>
-    <script>
-        if (window.terpediaChat) {
-            const apiEndpoint = window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000/api/chat'
-                : 'https://api.terpedia.com/chat';
-            window.terpediaChat.setApiEndpoint(apiEndpoint);
-        }
-    </script>
 </body>
 </html>
