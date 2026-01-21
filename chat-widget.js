@@ -55,11 +55,11 @@ class TerpediaChatWidget {
             // await this.loadSQLiteVecExtension();
             
             this.initialized = true;
-            this.updateStatus('✓ Connected to Terpedia Chat', 'success');
+            this.updateStatus('✓ Local RAG + Terpedia Chat ready', 'success');
         } catch (error) {
             console.warn('Could not load local database (using Terpedia API only):', error);
             this.initialized = false;
-            this.updateStatus('✓ Connected to Terpedia Chat', 'success');
+            this.updateStatus('✓ Terpedia Chat ready (RAG available as fallback)', 'success');
         }
     }
 
@@ -246,20 +246,33 @@ class TerpediaChatWidget {
     }
 
     async generateResponse(userMessage) {
-        // Primary: Use Terpedia Chat LLM API
-        try {
-            return await this.callTerpediaAPI(userMessage);
-        } catch (error) {
-            console.warn('Terpedia API failed, trying local search:', error);
-            
-            // Fallback: Try local SQLite search if available
-            if (this.initialized && this.db) {
-                const relevantChunks = await this.findRelevantChunks(userMessage, 5);
-                
+        // Step 1: Retrieve relevant chunks from local RAG database
+        let relevantChunks = [];
+        let contextText = '';
+        
+        if (this.initialized && this.db) {
+            try {
+                relevantChunks = await this.findRelevantChunks(userMessage, 5);
                 if (relevantChunks.length > 0) {
-                    const context = relevantChunks.map(c => c.chunk_text).join('\n\n---\n\n');
-                    return this.generateContextualResponse(userMessage, relevantChunks, context);
+                    contextText = relevantChunks.map(c => {
+                        const source = c.page_title ? `[Source: ${c.page_title}${c.section_heading ? ` - ${c.section_heading}` : ''}]` : '';
+                        return `${c.chunk_text}\n${source}`;
+                    }).join('\n\n---\n\n');
                 }
+            } catch (error) {
+                console.warn('Local RAG search failed:', error);
+            }
+        }
+        
+        // Step 2: Send query + context to Terpedia Chat LLM
+        try {
+            return await this.callTerpediaAPI(userMessage, contextText, relevantChunks);
+        } catch (error) {
+            console.warn('Terpedia API failed:', error);
+            
+            // Fallback: If we have chunks but API failed, generate basic response
+            if (relevantChunks.length > 0) {
+                return this.generateContextualResponse(userMessage, relevantChunks, contextText);
             }
             
             // If all else fails, throw the original error
@@ -267,9 +280,30 @@ class TerpediaChatWidget {
         }
     }
 
-    async callTerpediaAPI(userMessage) {
+    async callTerpediaAPI(userMessage, contextText = '', relevantChunks = []) {
         // Try each endpoint until one works
         let lastError = null;
+        
+        // Build context with RAG chunks
+        const context = {
+            conversation_history: this.messages.slice(-10).map(m => ({
+                role: m.role,
+                content: m.content
+            })),
+            site: 'functional-flavors',
+            page_url: window.location.href,
+            page_title: document.title
+        };
+        
+        // Add RAG context if available
+        if (contextText) {
+            context.rag_context = contextText;
+            context.rag_sources = relevantChunks.map(c => ({
+                page_title: c.page_title,
+                page_url: c.page_url,
+                section: c.section_heading
+            }));
+        }
         
         for (const endpoint of this.apiEndpoints) {
             try {
@@ -280,15 +314,7 @@ class TerpediaChatWidget {
                     },
                     body: JSON.stringify({
                         message: userMessage,
-                        context: {
-                            conversation_history: this.messages.slice(-10).map(m => ({
-                                role: m.role,
-                                content: m.content
-                            })),
-                            site: 'functional-flavors',
-                            page_url: window.location.href,
-                            page_title: document.title
-                        }
+                        context: context
                     }),
                 });
                 
@@ -333,7 +359,7 @@ class TerpediaChatWidget {
         const sourceText = sources.length > 0 ? `\n\n*Sources: ${sources.join(', ')}*` : '';
         
         const combinedText = topChunks.map(c => c.chunk_text).join('\n\n---\n\n');
-        const excerpt = combinedText.substring(0, 1000);
+        const excerpt = combinedText.substring(0, 1500);
         
         return `Based on the site content, here's what I found:\n\n${excerpt}${excerpt.length < combinedText.length ? '...' : ''}${sourceText}\n\nFor more complete information, check the relevant sections in the article or use the table of contents to navigate directly.`;
     }
@@ -360,7 +386,7 @@ class TerpediaChatWidget {
                             <li>FDA regulations and health claims</li>
                             <li>Safety and toxicology information</li>
                         </ul>
-                        <p id="dbStatus">Connecting to Terpedia Chat...</p>
+                        <p id="dbStatus">Loading local RAG and connecting to Terpedia Chat...</p>
                     </div>
                 </div>
                 <div class="chat-widget-input-container">
