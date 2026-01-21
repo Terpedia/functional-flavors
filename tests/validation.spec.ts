@@ -221,15 +221,20 @@ test.describe('Terpedia Site Validation', () => {
     await page.goto('file://' + join(process.cwd(), 'cinnamon-roll-tabs.html'));
     
     // Click on GCMS CoA tab
-    await page.getByText('GCMS CoA').click();
+    await page.locator('.tab-button:has-text("GCMS CoA")').click();
     await page.waitForTimeout(500);
     
-    // Verify CoA tab is active
-    await expect(page.locator('#coa.tab-content.active')).toBeVisible();
+    // Verify CoA tab is active and get reference
+    const coaTab = page.locator('#coa.tab-content.active');
+    await expect(coaTab).toBeVisible();
     
-    // Click on Cinnamaldehyde link
-    const cinnamaldehydeLink = page.locator('a[href="compounds/cinnamaldehyde.html"]').first();
-    await expect(cinnamaldehydeLink).toBeVisible();
+    // Wait for table to be visible
+    await expect(coaTab.locator('.coa-table')).toBeVisible();
+    await page.waitForTimeout(300);
+    
+    // Click on Cinnamaldehyde link (within the active CoA tab)
+    const cinnamaldehydeLink = coaTab.locator('a[href="compounds/cinnamaldehyde.html"]').first();
+    await expect(cinnamaldehydeLink).toBeVisible({ timeout: 5000 });
     await cinnamaldehydeLink.click();
     await expect(page).toHaveURL(/cinnamaldehyde\.html/);
     await expect(page.locator('h2')).toContainText('Cinnamaldehyde');
@@ -239,8 +244,11 @@ test.describe('Terpedia Site Validation', () => {
     await page.locator('.tab-button:has-text("GCMS CoA")').click();
     await page.waitForTimeout(500);
     const coaTab2 = page.locator('#coa.tab-content.active');
+    await expect(coaTab2).toBeVisible();
+    await expect(coaTab2.locator('.coa-table')).toBeVisible();
+    await page.waitForTimeout(300);
     const eugenolLink = coaTab2.locator('a[href="compounds/eugenol.html"]').first();
-    await expect(eugenolLink).toBeVisible();
+    await expect(eugenolLink).toBeVisible({ timeout: 5000 });
     await eugenolLink.click();
     await expect(page).toHaveURL(/eugenol\.html/);
     await expect(page.locator('h2')).toContainText('Eugenol');
