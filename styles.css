@@ -1,5 +1,200 @@
 /* Terpedia - Scientific Repository Styles */
 
+/* Table of Contents */
+.table-of-contents {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+}
+
+.table-of-contents h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    margin-left: 0;
+}
+
+.table-of-contents > ul {
+    padding-left: 0;
+}
+
+.table-of-contents ul ul {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.table-of-contents li {
+    margin: 0.5rem 0;
+}
+
+.table-of-contents a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.table-of-contents a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+}
+
+/* Article Header */
+.article-header {
+    margin-bottom: 2rem;
+}
+
+.article-meta {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* Evidence Level Indicators */
+.evidence-note {
+    background-color: #f0f7ff;
+    border-left: 4px solid #3498db;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    border-radius: 4px;
+}
+
+.evidence-note strong {
+    color: var(--primary-color);
+}
+
+/* Assumptions Box */
+.assumptions-box {
+    background-color: #fff9e6;
+    border: 1px solid #f0c674;
+    border-left: 4px solid #f0c674;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+}
+
+.assumptions-box h4 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+.assumptions-box ul {
+    margin: 1rem 0;
+}
+
+/* Back to Top Link */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 50%;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    display: none;
+    z-index: 1000;
+}
+
+.back-to-top:hover {
+    background-color: #d35400;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.back-to-top.visible {
+    display: block;
+}
+
+/* Evidence Badges */
+.evidence-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    margin-left: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.evidence-strong {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.evidence-moderate {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.evidence-limited {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Back to Top Button */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: var(--accent-color);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    font-size: 1.5rem;
+    font-weight: bold;
+    z-index: 1000;
+}
+
+.back-to-top:hover {
+    background-color: #d35400;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.back-to-top:not(.visible) {
+    display: none;
+}
+
+/* Print Styles */
+@media print {
+    .table-of-contents {
+        page-break-after: always;
+    }
+    
+    nav, .back-to-top {
+        display: none;
+    }
+    
+    article {
+        box-shadow: none;
+    }
+    
+    .evidence-badge {
+        display: none;
+    }
+}
+
 :root {
     --primary-color: #2c3e50;
     --secondary-color: #34495e;
