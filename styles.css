@@ -7,6 +7,10 @@
     border-radius: 8px;
     padding: 1.5rem;
     margin: 2rem 0;
+    max-width: 100%;
+    overflow-x: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .table-of-contents h3 {
@@ -34,12 +38,19 @@
 
 .table-of-contents li {
     margin: 0.5rem 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .table-of-contents a {
     color: var(--link-color);
     text-decoration: none;
     transition: color 0.3s;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    display: inline-block;
+    max-width: 100%;
 }
 
 .table-of-contents a:hover {
@@ -601,6 +612,17 @@ footer p {
 
     article {
         padding: 1.5rem;
+    }
+
+    .table-of-contents {
+        padding: 1rem;
+        margin: 1rem 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-of-contents ul ul {
+        margin-left: 1rem;
     }
 
     h2 {
