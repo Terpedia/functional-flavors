@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absinthe: Herbal Ingredients &amp; Bioactive Compounds | Terpedia</title>
+    <meta name="description" content="Comprehensive analysis of absinthe's herbal ingredients, their bioactive compounds, and the biological interactions of those compounds in the human body.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="chat-widget.css">
+    <style>
+        /* Absinthe page styles */
+        .absinthe-intro {
+            background: linear-gradient(135deg, #1a3a2a 0%, #2c5f3f 50%, #3a7a52 100%);
+            color: #fff;
+            padding: 2.5rem;
+            border-radius: 8px;
+            margin-bottom: 2.5rem;
+        }
+        .absinthe-intro h2 {
+            color: #a8e6cf;
+            border-bottom-color: #6ecf9a;
+            font-size: 1.8rem;
+        }
+        .absinthe-intro p {
+            color: #e0f0e8;
+            text-align: left;
+        }
+        .absinthe-intro .la-fee-verte {
+            font-style: italic;
+            color: #a8e6cf;
+            font-size: 1.05rem;
+        }
+
+        /* Herb cards */
+        .herb-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .herb-card {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid #2c5f3f;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .herb-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+        .herb-card.trinity {
+            border-left-color: #e67e22;
+        }
+        .herb-card.coloring {
+            border-left-color: #27ae60;
+        }
+        .herb-card h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.15rem;
+        }
+        .herb-card .botanical {
+            font-style: italic;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin: 0.15rem 0 0.5rem;
+        }
+        .herb-card .role-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.2rem 0.55rem;
+            border-radius: 3px;
+            margin-bottom: 0.75rem;
+        }
+        .herb-card .role-tag.trinity-tag {
+            background-color: #fef3e2;
+            color: #c65d00;
+            border: 1px solid #f0c674;
+        }
+        .herb-card .role-tag.coloring-tag {
+            background-color: #e8f8ef;
+            color: #1a7a42;
+            border: 1px solid #a8e6cf;
+        }
+        .herb-card .compound-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.75rem;
+        }
+        .herb-card .compound-pill {
+            display: inline-block;
+            background-color: #eef6f1;
+            color: #2c5f3f;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px solid #c8e6d5;
+            transition: all 0.2s;
+        }
+        .herb-card .compound-pill:hover {
+            background-color: #2c5f3f;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Master compound table */
+        .compound-master-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 1.5rem 0;
+        }
+        .compound-master-table thead {
+            background-color: #2c5f3f;
+            color: #fff;
+        }
+        .compound-master-table th {
+            padding: 0.85rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #1a3a2a;
+        }
+        .compound-master-table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .compound-master-table tbody tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+        .compound-master-table tbody tr:hover {
+            background-color: #e8f4ed;
+        }
+        .compound-master-table td {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+        .compound-master-table td:first-child a {
+            color: var(--link-color);
+            font-weight: 600;
+        }
+
+        /* Compound detail sections */
+        .compound-detail {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: var(--bg-light);
+            border-radius: 8px;
+            border-top: 4px solid #2c5f3f;
+        }
+        .compound-detail h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+        }
+        .compound-detail .chem-props {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin: 1rem 0 1.5rem;
+            padding: 1rem;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        .compound-detail .chem-prop {
+            font-size: 0.9rem;
+        }
+        .compound-detail .chem-prop strong {
+            color: var(--secondary-color);
+        }
+        .interaction-category {
+            margin: 1.5rem 0;
+            padding: 1rem 1.25rem;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+            border-left: 4px solid #2c5f3f;
+        }
+        .interaction-category h5 {
+            margin: 0 0 0.75rem;
+            color: #2c5f3f;
+            font-size: 1.05rem;
+        }
+        .interaction-category ul {
+            margin: 0.5rem 0 0 1.25rem;
+        }
+        .interaction-category li {
+            margin-bottom: 0.4rem;
+            font-size: 0.93rem;
+        }
+        .safety-box {
+            background-color: #fff9e6;
+            border: 1px solid #f0c674;
+            border-left: 4px solid #f0c674;
+            padding: 1rem 1.25rem;
+            border-radius: 6px;
+            margin-top: 1.5rem;
+        }
+        .safety-box h5 {
+            margin: 0 0 0.5rem;
+            color: #856404;
+        }
+        .dose-note {
+            background-color: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        /* Section divider */
+        .section-divider {
+            border: none;
+            border-top: 2px solid var(--border-color);
+            margin: 3rem 0;
+        }
+
+        /* Back to TOC link */
+        .back-toc {
+            display: inline-block;
+            font-size: 0.85rem;
+            color: var(--link-color);
+            margin-top: 1rem;
+        }
+        .back-toc:hover {
+            color: var(--link-hover);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .herb-grid {
+                grid-template-columns: 1fr;
+            }
+            .absinthe-intro {
+                padding: 1.5rem;
+            }
+            .compound-detail {
+                padding: 1.25rem;
+            }
+            .compound-detail .chem-props {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Terpedia</h1>
+            <p class="subtitle">Scientific Repository for Functional Flavors Research</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="cinnamon-roll-tabs.html">Cinnamon Roll</a></li>
+                <li><a href="absinthe.html">Absinthe</a></li>
+                <li><a href="compounds.html">All Compounds</a></li>
+                <li><a href="go-to-market.html">Go-to-Market</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <article class="research-article">
+
+            <!-- Intro -->
+            <div class="absinthe-intro" id="top">
+                <h2>Absinthe: Herbal Ingredients &amp; Bioactive Compounds</h2>
+                <p class="la-fee-verte">"La F&eacute;e Verte" &mdash; The Green Fairy</p>
+                <p>
+                    Absinthe is a highly aromatic, anise-flavored spirit traditionally distilled from a base of neutral grape spirit infused with a complex botanical blend. Its defining character comes from three primary herbs&mdash;grand wormwood, green anise, and Florence fennel&mdash;known collectively as the "holy trinity." Additional herbs contribute color, aroma, and secondary bioactive compounds. This page catalogs each herbal ingredient, identifies its key bioactive compounds, and details the biological interactions of those compounds in the human body.
+                </p>
+            </div>
+
+            <!-- Table of Contents -->
+            <div class="table-of-contents" id="toc">
+                <h3>Table of Contents</h3>
+                <ul>
+                    <li><a href="#herbs">I. Herbal Ingredients</a>
+                        <ul>
+                            <li><a href="#herb-wormwood">Grand Wormwood</a></li>
+                            <li><a href="#herb-anise">Green Anise</a></li>
+                            <li><a href="#herb-fennel">Florence Fennel</a></li>
+                            <li><a href="#herb-petit-wormwood">Petit Wormwood</a></li>
+                            <li><a href="#herb-hyssop">Hyssop</a></li>
+                            <li><a href="#herb-melissa">Lemon Balm (Melissa)</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="absinthe-coa.html">GC-MS Certificate of Analysis</a></li>
+                    <li><a href="#compound-table">II. Master Compound Table</a></li>
+                    <li><a href="#compound-details">III. Compound Biological Interactions</a>
+                        <ul>
+                            <li><a href="#thujone">Thujone (&alpha;/&beta;)</a></li>
+                            <li><a href="#absinthin">Absinthin</a></li>
+                            <li><a href="#artabsin">Artabsin</a></li>
+                            <li><a href="#chamazulene">Chamazulene</a></li>
+                            <li><a href="#anethole">trans-Anethole</a></li>
+                            <li><a href="#estragole">Estragole (Methyl Chavicol)</a></li>
+                            <li><a href="#fenchone">Fenchone</a></li>
+                            <li><a href="#pinocamphone">Pinocamphone &amp; Isopinocamphone</a></li>
+                            <li><a href="#rosmarinic-acid">Rosmarinic Acid</a></li>
+                            <li><a href="#linalool">Linalool</a></li>
+                            <li><a href="#myrcene">Myrcene</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#references">IV. References</a></li>
+                </ul>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- SECTION I: HERBAL INGREDIENTS                                -->
+            <!-- ============================================================ -->
+            <section id="herbs">
+                <h2>I. Herbal Ingredients</h2>
+                <p>
+                    Traditional absinthe recipes employ six principal botanicals divided into two stages: the <strong>distillation herbs</strong> (the holy trinity) that form the spirit's core flavor, and the <strong>coloring herbs</strong> that contribute the natural green hue and additional aromatic complexity during a post-distillation maceration step.
+                </p>
+
+                <div class="herb-grid">
+
+                    <!-- Grand Wormwood -->
+                    <div class="herb-card trinity" id="herb-wormwood">
+                        <span class="role-tag trinity-tag">Holy Trinity &mdash; Distillation</span>
+                        <h4>Grand Wormwood</h4>
+                        <p class="botanical">Artemisia absinthium L.</p>
+                        <p>
+                            The defining ingredient of absinthe and the source of its name. Grand wormwood contributes a distinctive bitter, herbaceous character and is the primary source of thujone, the compound historically (and controversially) associated with absinthe's psychoactive reputation. It also provides bitter sesquiterpene lactones (absinthin, artabsin) and the anti-inflammatory compound chamazulene.
+                        </p>
+                        <div class="compound-pills">
+                            <a href="#thujone" class="compound-pill">Thujone</a>
+                            <a href="#absinthin" class="compound-pill">Absinthin</a>
+                            <a href="#artabsin" class="compound-pill">Artabsin</a>
+                            <a href="#chamazulene" class="compound-pill">Chamazulene</a>
+                            <a href="#myrcene" class="compound-pill">Myrcene</a>
+                        </div>
+                    </div>
+
+                    <!-- Green Anise -->
+                    <div class="herb-card trinity" id="herb-anise">
+                        <span class="role-tag trinity-tag">Holy Trinity &mdash; Distillation</span>
+                        <h4>Green Anise</h4>
+                        <p class="botanical">Pimpinella anisum L.</p>
+                        <p>
+                            Provides the dominant sweet, licorice-like aroma and flavor of absinthe. Green anise is the primary source of trans-anethole, the compound responsible for absinthe's characteristic milky "louche" (opalescence) when water is added. It also contains estragole and linalool as secondary volatiles.
+                        </p>
+                        <div class="compound-pills">
+                            <a href="#anethole" class="compound-pill">trans-Anethole</a>
+                            <a href="#estragole" class="compound-pill">Estragole</a>
+                            <a href="#linalool" class="compound-pill">Linalool</a>
+                        </div>
+                    </div>
+
+                    <!-- Florence Fennel -->
+                    <div class="herb-card trinity" id="herb-fennel">
+                        <span class="role-tag trinity-tag">Holy Trinity &mdash; Distillation</span>
+                        <h4>Florence Fennel</h4>
+                        <p class="botanical">Foeniculum vulgare Mill.</p>
+                        <p>
+                            Complements anise with a rounder, slightly sweeter licorice note and adds depth to the louche. Florence fennel contributes additional anethole, along with fenchone (a camphoraceous monoterpene ketone) and estragole. The fenchone content helps distinguish fennel's flavor from that of anise alone.
+                        </p>
+                        <div class="compound-pills">
+                            <a href="#anethole" class="compound-pill">trans-Anethole</a>
+                            <a href="#fenchone" class="compound-pill">Fenchone</a>
+                            <a href="#estragole" class="compound-pill">Estragole</a>
+                            <a href="#myrcene" class="compound-pill">Myrcene</a>
+                        </div>
+                    </div>
+
+                    <!-- Petit Wormwood -->
+                    <div class="herb-card coloring" id="herb-petit-wormwood">
+                        <span class="role-tag coloring-tag">Coloring Herb &mdash; Maceration</span>
+                        <h4>Petit Wormwood</h4>
+                        <p class="botanical">Artemisia pontica L.</p>
+                        <p>
+                            Also called Roman wormwood, this gentler relative of grand wormwood is used in the coloring step. It imparts a subtle herbaceous bitterness and contributes to the natural green color. Contains lower levels of thujone than grand wormwood, along with additional monoterpenes and sesquiterpenes.
+                        </p>
+                        <div class="compound-pills">
+                            <a href="#thujone" class="compound-pill">Thujone (trace)</a>
+                            <a href="#chamazulene" class="compound-pill">Chamazulene</a>
+                            <a href="#myrcene" class="compound-pill">Myrcene</a>
+                        </div>
+                    </div>
+
+                    <!-- Hyssop -->
+                    <div class="herb-card coloring" id="herb-hyssop">
+                        <span class="role-tag coloring-tag">Coloring Herb &mdash; Maceration</span>
+                        <h4>Hyssop</h4>
+                        <p class="botanical">Hyssopus officinalis L.</p>
+                        <p>
+                            A mint-family herb that contributes a warm, minty-camphoraceous aroma and vivid green chlorophyll to the coloring step. Hyssop's essential oil is rich in pinocamphone and isopinocamphone (monoterpene ketones) and also contains rosmarinic acid, a potent polyphenol antioxidant.
+                        </p>
+                        <div class="compound-pills">
+                            <a href="#pinocamphone" class="compound-pill">Pinocamphone</a>
+                            <a href="#rosmarinic-acid" class="compound-pill">Rosmarinic Acid</a>
+                            <a href="#linalool" class="compound-pill">Linalool</a>
+                        </div>
+                    </div>
+
+                    <!-- Lemon Balm / Melissa -->
+                    <div class="herb-card coloring" id="herb-melissa">
+                        <span class="role-tag coloring-tag">Coloring Herb &mdash; Maceration</span>
+                        <h4>Lemon Balm (Melissa)</h4>
+                        <p class="botanical">Melissa officinalis L.</p>
+                        <p>
+                            Adds a bright, citrusy-herbal note that lightens absinthe's otherwise heavy botanical profile. Lemon balm is a rich source of rosmarinic acid and also contains linalool and other monoterpenoids. Traditionally prized for its calming properties.
+                        </p>
+                        <div class="compound-pills">
+                            <a href="#rosmarinic-acid" class="compound-pill">Rosmarinic Acid</a>
+                            <a href="#linalool" class="compound-pill">Linalool</a>
+                            <a href="#myrcene" class="compound-pill">Myrcene</a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- ============================================================ -->
+            <!-- SECTION II: MASTER COMPOUND TABLE                            -->
+            <!-- ============================================================ -->
+            <section id="compound-table">
+                <h2>II. Master Compound Table</h2>
+                <p>
+                    The table below maps each key bioactive compound to its herbal source(s), chemical class, and primary biological activities in the human body.
+                </p>
+                <div style="overflow-x:auto;">
+                <table class="compound-master-table">
+                    <thead>
+                        <tr>
+                            <th>Compound</th>
+                            <th>Formula</th>
+                            <th>Class</th>
+                            <th>Herbal Source(s)</th>
+                            <th>Primary Biological Activities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="#thujone">Thujone (&alpha;/&beta;)</a></td>
+                            <td>C&#8321;&#8320;H&#8321;&#8326;O</td>
+                            <td>Monoterpene ketone</td>
+                            <td>Grand wormwood, Petit wormwood</td>
+                            <td>GABA-A receptor modulation, neurostimulant, convulsant (high dose)</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#absinthin">Absinthin</a></td>
+                            <td>C&#8323;&#8320;H&#8324;&#8320;O&#8326;</td>
+                            <td>Sesquiterpene lactone (dimeric)</td>
+                            <td>Grand wormwood</td>
+                            <td>Bitter taste receptor activation, anti-inflammatory, hepatoprotective</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#artabsin">Artabsin</a></td>
+                            <td>C&#8321;&#8325;H&#8322;&#8320;O&#8323;</td>
+                            <td>Sesquiterpene lactone</td>
+                            <td>Grand wormwood</td>
+                            <td>Anti-inflammatory, antimalarial, NF-&kappa;B inhibition</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#chamazulene">Chamazulene</a></td>
+                            <td>C&#8321;&#8324;H&#8321;&#8326;</td>
+                            <td>Sesquiterpene (azulene)</td>
+                            <td>Grand wormwood, Petit wormwood</td>
+                            <td>Anti-inflammatory (5-LOX inhibition), antioxidant, antiallergic</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#anethole"><em>trans</em>-Anethole</a></td>
+                            <td>C&#8321;&#8320;H&#8321;&#8322;O</td>
+                            <td>Phenylpropanoid</td>
+                            <td>Green anise, Florence fennel</td>
+                            <td>Anti-inflammatory, estrogenic activity, analgesic</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#estragole">Estragole</a></td>
+                            <td>C&#8321;&#8320;H&#8321;&#8322;O</td>
+                            <td>Phenylpropanoid</td>
+                            <td>Green anise, Florence fennel</td>
+                            <td>Spasmolytic, potentially genotoxic metabolites at high exposure</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#fenchone">Fenchone</a></td>
+                            <td>C&#8321;&#8320;H&#8321;&#8326;O</td>
+                            <td>Monoterpene ketone (bicyclic)</td>
+                            <td>Florence fennel</td>
+                            <td>Mucolytic, bronchodilator, secretolytic</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#pinocamphone">Pinocamphone</a></td>
+                            <td>C&#8321;&#8320;H&#8321;&#8326;O</td>
+                            <td>Monoterpene ketone (bicyclic)</td>
+                            <td>Hyssop</td>
+                            <td>Neurotoxic at high dose, convulsant, antimicrobial</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#rosmarinic-acid">Rosmarinic Acid</a></td>
+                            <td>C&#8321;&#8328;H&#8321;&#8326;O&#8328;</td>
+                            <td>Polyphenol (hydroxycinnamic acid ester)</td>
+                            <td>Hyssop, Lemon balm</td>
+                            <td>Antioxidant, anti-inflammatory, anxiolytic, neuroprotective</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#linalool">Linalool</a></td>
+                            <td>C&#8321;&#8320;H&#8321;&#8328;O</td>
+                            <td>Monoterpene alcohol (acyclic)</td>
+                            <td>Green anise, Hyssop, Lemon balm</td>
+                            <td>Anxiolytic, sedative, anti-inflammatory, local anesthetic</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#myrcene">Myrcene</a></td>
+                            <td>C&#8321;&#8320;H&#8321;&#8326;</td>
+                            <td>Monoterpene (acyclic)</td>
+                            <td>Grand wormwood, Florence fennel, Lemon balm</td>
+                            <td>Analgesic, anti-inflammatory, muscle relaxant, sedative</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                <p class="table-note">
+                    Note: Compound concentrations vary significantly depending on cultivar, terroir, harvest time, and distillation parameters. Thujone content in commercial absinthe is regulated (EU: &le;35 mg/kg; US: &le;10 mg/L).
+                </p>
+                <div class="dose-note" style="margin-top:1.5rem;">
+                    <strong>GC-MS Certificate of Analysis:</strong> For a full analytical profile with retention times, Kov&aacute;ts indices, area %, concentrations (mg/L), spectral match quality, botanical source attribution, and regulatory thujone compliance data, see the <a href="absinthe-coa.html">Absinthe GC-MS COA &rarr;</a>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- ============================================================ -->
+            <!-- SECTION III: COMPOUND BIOLOGICAL INTERACTIONS                -->
+            <!-- ============================================================ -->
+            <section id="compound-details">
+                <h2>III. Compound Biological Interactions in Humans</h2>
+                <p>
+                    Each compound section below details its chemical properties, biological targets, mechanisms of action, and safety considerations relevant to human physiology.
+                </p>
+
+                <!-- ==================== THUJONE ==================== -->
+                <div class="compound-detail" id="thujone">
+                    <h3>Thujone (&alpha;-Thujone &amp; &beta;-Thujone)</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8320;H&#8321;&#8326;O</div>
+                        <div class="chem-prop"><strong>MW:</strong> 152.23 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Monoterpene ketone (bicyclic)</div>
+                        <div class="chem-prop"><strong>IUPAC:</strong> (1S,4R)-4-Methyl-1-(propan-2-yl)bicyclo[3.1.0]hexan-3-one</div>
+                        <div class="chem-prop"><strong>Source(s):</strong> Grand wormwood, Petit wormwood</div>
+                    </div>
+
+                    <p>
+                        Thujone is the most historically significant compound in absinthe, long blamed for "absinthism"&mdash;a syndrome of hallucinations, convulsions, and mental deterioration attributed to absinthe abuse in the 19th century. Modern research has largely debunked these claims, showing that thujone levels in properly made absinthe are far too low to cause such effects; ethanol toxicity was the primary culprit.
+                    </p>
+
+                    <div class="interaction-category">
+                        <h5>GABAergic System Modulation</h5>
+                        <ul>
+                            <li><strong>GABA-A receptor antagonism:</strong> &alpha;-Thujone acts as a noncompetitive antagonist at GABA<sub>A</sub> receptors, specifically blocking the chloride ion channel associated with this receptor. This reduces inhibitory neurotransmission.</li>
+                            <li><strong>Dose-dependent excitation:</strong> At low concentrations, this GABA blockade produces mild CNS stimulation and alertness. At higher concentrations, it can cause muscle spasms, seizures, and convulsions.</li>
+                            <li><strong>&alpha; vs &beta; potency:</strong> &alpha;-Thujone is approximately 2&ndash;3&times; more potent than &beta;-thujone as a GABA-A antagonist, and more convulsant.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Serotonergic System</h5>
+                        <ul>
+                            <li>Interacts with 5-HT<sub>3</sub> (serotonin type 3) receptors as a competitive antagonist.</li>
+                            <li>5-HT<sub>3</sub> antagonism may contribute to antiemetic effects at low doses.</li>
+                            <li>May partially explain the "lucid" or "clear-headed" quality some drinkers report with absinthe versus other spirits.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Hepatic Metabolism</h5>
+                        <ul>
+                            <li>Metabolized primarily by hepatic cytochrome P450 enzymes (CYP2A6, CYP3A4, CYP2B6).</li>
+                            <li>&alpha;-Thujone is converted to 7-hydroxy-&alpha;-thujone (primary detoxification metabolite) and subsequently conjugated for urinary excretion.</li>
+                            <li>Rapid first-pass metabolism significantly reduces systemic bioavailability after oral ingestion.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Other Interactions</h5>
+                        <ul>
+                            <li><strong>Porphyrinogenic:</strong> Can induce hepatic porphyrin synthesis; relevant to individuals with porphyria.</li>
+                            <li><strong>Cannabinoid hypothesis (debunked):</strong> Early speculation that thujone acts on CB1 cannabinoid receptors has not been supported by subsequent research.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>EU regulatory limit: &le;35 mg/kg in absinthe; US: &le;10 mg/L ("thujone-free" designation).</li>
+                            <li>Acute toxicity (LD<sub>50</sub> oral, rat): ~45 mg/kg for &alpha;-thujone.</li>
+                            <li>Typical absinthe consumption delivers &lt;1 mg thujone per serving&mdash;far below any threshold for GABA-A antagonism or neurotoxicity.</li>
+                            <li>Seizure risk at pharmacologically relevant doses; contraindicated in epilepsy.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== ABSINTHIN ==================== -->
+                <div class="compound-detail" id="absinthin">
+                    <h3>Absinthin</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8323;&#8320;H&#8324;&#8320;O&#8326;</div>
+                        <div class="chem-prop"><strong>MW:</strong> 496.64 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Dimeric sesquiterpene lactone (guaianolide)</div>
+                        <div class="chem-prop"><strong>Source:</strong> Grand wormwood (<em>A. absinthium</em>)</div>
+                    </div>
+
+                    <p>
+                        Absinthin is one of the most intensely bitter natural compounds known, detectable at dilutions as low as 1:70,000. It is the principal contributor to absinthe's bitter character and the compound responsible for the traditional practice of dissolving sugar into the drink.
+                    </p>
+
+                    <div class="interaction-category">
+                        <h5>Bitter Taste Receptor Activation (TAS2R)</h5>
+                        <ul>
+                            <li>Potently activates TAS2R (T2R) bitter taste receptors on the tongue, particularly TAS2R10, TAS2R14, and TAS2R46.</li>
+                            <li>Bitter receptor activation stimulates saliva production and primes digestive enzyme secretion (amylase, lipase).</li>
+                            <li>Extraoral bitter receptors in the GI tract trigger release of cholecystokinin (CCK) and glucagon-like peptide-1 (GLP-1), promoting satiety signaling and gastric motility.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Anti-inflammatory Activity</h5>
+                        <ul>
+                            <li>Inhibits NF-&kappa;B nuclear translocation, reducing transcription of pro-inflammatory cytokines (TNF-&alpha;, IL-1&beta;, IL-6).</li>
+                            <li>Suppresses nitric oxide (NO) production via downregulation of iNOS expression.</li>
+                            <li>Inhibits prostaglandin E<sub>2</sub> (PGE<sub>2</sub>) synthesis through COX-2 suppression.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Hepatoprotective Effects</h5>
+                        <ul>
+                            <li>Protects hepatocytes against oxidative damage from toxicants (e.g., carbon tetrachloride, acetaminophen) in animal models.</li>
+                            <li>Enhances glutathione (GSH) levels and superoxide dismutase (SOD) activity in liver tissue.</li>
+                            <li>May ameliorate bile flow impairment (choleretic activity).</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Digestive &amp; Appetite Effects</h5>
+                        <ul>
+                            <li>The intense bitterness promotes "bitter tonic" digestive stimulation&mdash;enhancing gastric acid, bile, and enzyme secretion.</li>
+                            <li>Traditional use as an aperitif and digestive bitter is consistent with modern understanding of TAS2R-mediated gut hormone release.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>Low systemic toxicity; poorly absorbed due to high molecular weight and low lipophilicity.</li>
+                            <li>Excessive bitter herb consumption may cause nausea in sensitive individuals.</li>
+                            <li>Generally considered safe at levels present in traditional absinthe and herbal bitters.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== ARTABSIN ==================== -->
+                <div class="compound-detail" id="artabsin">
+                    <h3>Artabsin</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8325;H&#8322;&#8320;O&#8323;</div>
+                        <div class="chem-prop"><strong>MW:</strong> 248.32 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Sesquiterpene lactone (guaianolide)</div>
+                        <div class="chem-prop"><strong>Source:</strong> Grand wormwood (<em>A. absinthium</em>)</div>
+                    </div>
+
+                    <p>
+                        Artabsin is a monomeric sesquiterpene lactone found alongside absinthin in grand wormwood. It contributes to bitterness and possesses notable anti-inflammatory and antiparasitic properties. Artabsin is also a biosynthetic precursor to other bioactive guaianolides.
+                    </p>
+
+                    <div class="interaction-category">
+                        <h5>Anti-inflammatory &amp; Immunomodulatory</h5>
+                        <ul>
+                            <li>Inhibits NF-&kappa;B signaling by preventing I&kappa;B&alpha; phosphorylation and degradation.</li>
+                            <li>Reduces secretion of TNF-&alpha;, IL-6, and IL-1&beta; in activated macrophages.</li>
+                            <li>Suppresses MAPK (p38, ERK, JNK) phosphorylation cascades involved in inflammatory gene expression.</li>
+                            <li>May modulate T-cell polarization, potentially reducing Th17-mediated autoimmune responses.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Antimalarial &amp; Antiparasitic</h5>
+                        <ul>
+                            <li><em>Artemisia</em> genus compounds have well-documented antimalarial activity (cf. artemisinin from <em>A. annua</em>). Artabsin shows moderate in vitro activity against <em>Plasmodium falciparum</em>.</li>
+                            <li>The &alpha;-methylene-&gamma;-lactone group reacts with thiol groups on parasite proteins, disrupting redox balance.</li>
+                            <li>Synergistic with other sesquiterpene lactones in crude wormwood extracts.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Cytotoxic &amp; Antitumor (Preclinical)</h5>
+                        <ul>
+                            <li>Induces apoptosis in several cancer cell lines (colon, breast, leukemia) via mitochondrial pathway activation (caspase-3, caspase-9).</li>
+                            <li>Generates reactive oxygen species (ROS) in tumor cells while sparing normal cells at low concentrations.</li>
+                            <li>Evidence is preclinical (in vitro / animal); no clinical trials in humans to date.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>Present in low concentrations in finished absinthe due to distillation losses.</li>
+                            <li>The &alpha;-methylene-&gamma;-lactone moiety can be a sensitizer; allergic contact dermatitis reported with concentrated <em>Artemisia</em> extracts.</li>
+                            <li>Generally well-tolerated at dietary intake levels from herbal preparations.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== CHAMAZULENE ==================== -->
+                <div class="compound-detail" id="chamazulene">
+                    <h3>Chamazulene</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8324;H&#8321;&#8326;</div>
+                        <div class="chem-prop"><strong>MW:</strong> 184.28 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Sesquiterpene (azulene derivative)</div>
+                        <div class="chem-prop"><strong>IUPAC:</strong> 7-Ethyl-1,4-dimethylazulene</div>
+                        <div class="chem-prop"><strong>Source(s):</strong> Grand wormwood, Petit wormwood</div>
+                    </div>
+
+                    <p>
+                        Chamazulene is a deep blue azulene compound formed during steam distillation from its precursor matricin. While not present in the raw plant, it appears in distilled essential oils and contributes to the blue-to-green color spectrum. Its potent anti-inflammatory properties have made it a subject of pharmaceutical interest.
+                    </p>
+
+                    <div class="interaction-category">
+                        <h5>Anti-inflammatory: 5-Lipoxygenase Inhibition</h5>
+                        <ul>
+                            <li>Directly inhibits 5-lipoxygenase (5-LOX), blocking the conversion of arachidonic acid to leukotrienes (LTB<sub>4</sub>, LTC<sub>4</sub>, LTD<sub>4</sub>).</li>
+                            <li>Leukotriene suppression reduces bronchoconstriction, vascular permeability, and neutrophil chemotaxis.</li>
+                            <li>Complementary to COX inhibition; targets the leukotriene arm of the arachidonic acid cascade.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Antioxidant Activity</h5>
+                        <ul>
+                            <li>Quenches singlet oxygen and scavenges hydroxyl radicals due to its extended aromatic &pi;-electron system.</li>
+                            <li>Inhibits lipid peroxidation in cell membrane models.</li>
+                            <li>Protects against UV-induced oxidative damage in skin models (photoprotective).</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Antiallergic Effects</h5>
+                        <ul>
+                            <li>Inhibits histamine release from mast cells in a dose-dependent manner.</li>
+                            <li>Reduces IgE-mediated allergic responses in animal models.</li>
+                            <li>Used topically in dermatological preparations for atopic dermatitis and eczema.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Wound Healing &amp; Skin Health</h5>
+                        <ul>
+                            <li>Promotes fibroblast proliferation and collagen synthesis in wound models.</li>
+                            <li>Anti-inflammatory and antioxidant properties synergistically accelerate tissue repair.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>Very low toxicity; widely used in cosmetics and dermatological products.</li>
+                            <li>Concentrations in distilled absinthe are low due to partial loss during distillation.</li>
+                            <li>No known adverse effects at dietary or cosmetic exposure levels.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== ANETHOLE ==================== -->
+                <div class="compound-detail" id="anethole">
+                    <h3><em>trans</em>-Anethole</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8320;H&#8321;&#8322;O</div>
+                        <div class="chem-prop"><strong>MW:</strong> 148.20 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Phenylpropanoid (propenylbenzene)</div>
+                        <div class="chem-prop"><strong>IUPAC:</strong> 1-Methoxy-4-[(E)-prop-1-enyl]benzene</div>
+                        <div class="chem-prop"><strong>Source(s):</strong> Green anise, Florence fennel</div>
+                    </div>
+
+                    <p>
+                        <em>trans</em>-Anethole is the most abundant volatile compound in absinthe, responsible for its characteristic anise/licorice flavor and for the "louche"&mdash;the opalescent milky cloud that forms when water dilutes the spirit, caused by anethole's poor water solubility creating an oil-in-water microemulsion.
+                    </p>
+                    <div class="dose-note">
+                        <strong>Existing compound page:</strong> <a href="compounds/anethole.html">View full anethole profile &rarr;</a>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Anti-inflammatory &amp; Immunomodulatory</h5>
+                        <ul>
+                            <li>Inhibits TNF-&alpha;-induced NF-&kappa;B activation by blocking I&kappa;B kinase (IKK) activity.</li>
+                            <li>Suppresses production of IL-1&beta;, IL-6, and PGE<sub>2</sub> in stimulated macrophages.</li>
+                            <li>Reduces neutrophil migration and adhesion molecule expression (ICAM-1, VCAM-1).</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Estrogenic Activity</h5>
+                        <ul>
+                            <li>Structural resemblance to estrogen allows weak binding to estrogen receptors (ER&alpha;, ER&beta;).</li>
+                            <li>Classified as a phytoestrogen; traditional galactagogue use in nursing mothers attributed to this activity.</li>
+                            <li>Estrogenic potency is orders of magnitude weaker than 17&beta;-estradiol; clinically significant effects unlikely at dietary doses.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Analgesic &amp; Antispasmodic</h5>
+                        <ul>
+                            <li>Inhibits voltage-gated sodium channels, producing local anesthetic effects.</li>
+                            <li>Relaxes smooth muscle in the gastrointestinal tract (antispasmodic); basis for traditional carminative use.</li>
+                            <li>Reduces writhing and formalin-induced pain responses in animal models.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Antimicrobial &amp; Antifungal</h5>
+                        <ul>
+                            <li>Disrupts fungal cell membranes; active against <em>Candida</em> species and dermatophytes.</li>
+                            <li>Moderate antibacterial activity against Gram-positive organisms.</li>
+                            <li>Synergistic antifungal effects when combined with fluconazole.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Hepatic Metabolism</h5>
+                        <ul>
+                            <li>Metabolized primarily by CYP1A2 and CYP2E1 to anethole epoxide, then to 4-methoxyphenylacetone.</li>
+                            <li>Anethole epoxide is potentially hepatotoxic at very high doses; detoxified by glutathione conjugation under normal conditions.</li>
+                            <li>Good oral bioavailability; peak plasma levels reached within 1 hour.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>GRAS (Generally Recognized As Safe) status in the US for food flavoring.</li>
+                            <li>ADI (Acceptable Daily Intake): 2 mg/kg body weight (JECFA).</li>
+                            <li>Hepatotoxicity observed only at doses 50&ndash;100&times; above typical dietary exposure in animal studies.</li>
+                            <li>Caution with concentrated essential oil ingestion; standard absinthe consumption is well within safe limits.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== ESTRAGOLE ==================== -->
+                <div class="compound-detail" id="estragole">
+                    <h3>Estragole (Methyl Chavicol)</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8320;H&#8321;&#8322;O</div>
+                        <div class="chem-prop"><strong>MW:</strong> 148.20 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Phenylpropanoid (allylbenzene)</div>
+                        <div class="chem-prop"><strong>IUPAC:</strong> 1-Allyl-4-methoxybenzene</div>
+                        <div class="chem-prop"><strong>Source(s):</strong> Green anise, Florence fennel</div>
+                    </div>
+
+                    <p>
+                        Estragole is a structural isomer of anethole (allyl vs. propenyl side chain), contributing a mild, sweet herbaceous note. While present at much lower concentrations than anethole, estragole has attracted regulatory scrutiny due to the potential genotoxicity of its hepatic metabolites.
+                    </p>
+
+                    <div class="interaction-category">
+                        <h5>Hepatic Bioactivation &amp; Genotoxicity Pathway</h5>
+                        <ul>
+                            <li>Metabolized by CYP1A2 and CYP2A6 to 1&prime;-hydroxyestragole (the proximate carcinogen).</li>
+                            <li>1&prime;-Hydroxyestragole is further sulfated by SULT1A1/SULT1C2 to form an electrophilic sulfate ester that can react with DNA, forming estragole-DNA adducts.</li>
+                            <li>DNA adducts (primarily N<sup>2</sup>-deoxyguanosine) have been detected in rodent liver tissue at high doses.</li>
+                            <li>Hepatocarcinogenic in rodents at chronic, high-dose exposures (50&ndash;600 mg/kg/day).</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Detoxification Pathways</h5>
+                        <ul>
+                            <li>Competing detoxification via O-demethylation (CYP enzymes) produces 4-allylphenol (chavicol), a non-genotoxic metabolite.</li>
+                            <li>Epoxidation of the allyl side chain followed by glutathione conjugation provides another detox route.</li>
+                            <li>At low dietary intakes, detoxification pathways predominate over bioactivation; risk increases nonlinearly with dose.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Spasmolytic &amp; Digestive Effects</h5>
+                        <ul>
+                            <li>Relaxes intestinal smooth muscle via calcium channel blockade.</li>
+                            <li>Mild carminative (anti-flatulent) activity when consumed as part of fennel or anise preparations.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>European Medicines Agency (EMA) and EFSA recommend minimizing estragole exposure and advise against concentrated estragole-containing essential oils.</li>
+                            <li>Human exposure from food and beverages (including absinthe) is estimated at 0.01&ndash;0.07 mg/kg/day&mdash;well below doses causing tumors in rodents.</li>
+                            <li>Margin of Exposure (MoE) analysis suggests low but non-negligible concern; ongoing regulatory review.</li>
+                            <li>Distillation reduces estragole content compared to raw herb extracts.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== FENCHONE ==================== -->
+                <div class="compound-detail" id="fenchone">
+                    <h3>Fenchone</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8320;H&#8321;&#8326;O</div>
+                        <div class="chem-prop"><strong>MW:</strong> 152.23 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Monoterpene ketone (bicyclic, fenchane skeleton)</div>
+                        <div class="chem-prop"><strong>IUPAC:</strong> 1,3,3-Trimethylbicyclo[2.2.1]heptan-2-one</div>
+                        <div class="chem-prop"><strong>Source:</strong> Florence fennel</div>
+                    </div>
+
+                    <p>
+                        Fenchone provides a distinctive camphoraceous, slightly bitter note that distinguishes fennel's flavor from pure anise. It is pharmacologically active as a respiratory and digestive aid.
+                    </p>
+
+                    <div class="interaction-category">
+                        <h5>Respiratory System Effects</h5>
+                        <ul>
+                            <li><strong>Mucolytic:</strong> Reduces mucus viscosity by disrupting disulfide bonds in mucin glycoproteins, facilitating expectoration.</li>
+                            <li><strong>Bronchodilator:</strong> Relaxes bronchial smooth muscle, increasing airway caliber. Mechanism involves calcium channel antagonism and possible &beta;<sub>2</sub>-adrenergic receptor modulation.</li>
+                            <li><strong>Secretolytic:</strong> Stimulates serous cell secretion in bronchial glands, thinning the mucus layer and improving mucociliary clearance.</li>
+                            <li>These properties underpin fennel's traditional use in cough syrups and respiratory herbal blends.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Gastrointestinal Effects</h5>
+                        <ul>
+                            <li>Antispasmodic activity on intestinal smooth muscle (similar to but weaker than anethole).</li>
+                            <li>Promotes gastric motility and may relieve bloating and dyspepsia.</li>
+                            <li>Mild cholagogue effect (stimulates bile production).</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Antimicrobial Activity</h5>
+                        <ul>
+                            <li>Moderate antibacterial activity against <em>Staphylococcus aureus</em> and <em>Escherichia coli</em>.</li>
+                            <li>Antifungal activity against <em>Aspergillus</em> and <em>Candida</em> species.</li>
+                            <li>Disrupts microbial membrane integrity via lipophilic interaction with the phospholipid bilayer.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Neurological Effects</h5>
+                        <ul>
+                            <li>At high concentrations, monoterpene ketones (including fenchone) can be neurotoxic, though fenchone is significantly less convulsant than thujone or pinocamphone.</li>
+                            <li>Mild GABA-A receptor interaction at elevated doses; not significant at dietary levels.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>Well-tolerated at levels found in fennel-containing foods and beverages.</li>
+                            <li>EMA recommends maximum 5 mg/kg fenchone in fennel preparations for infants (bitter fennel tea).</li>
+                            <li>Less neurotoxic than thujone; wider therapeutic margin.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== PINOCAMPHONE ==================== -->
+                <div class="compound-detail" id="pinocamphone">
+                    <h3>Pinocamphone &amp; Isopinocamphone</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8320;H&#8321;&#8326;O</div>
+                        <div class="chem-prop"><strong>MW:</strong> 152.23 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Monoterpene ketone (bicyclic, pinane skeleton)</div>
+                        <div class="chem-prop"><strong>IUPAC:</strong> (1S,2S,5S)-2,6,6-Trimethylbicyclo[3.1.1]heptan-3-one</div>
+                        <div class="chem-prop"><strong>Source:</strong> Hyssop (<em>Hyssopus officinalis</em>)</div>
+                    </div>
+
+                    <p>
+                        Pinocamphone and its diastereomer isopinocamphone are the dominant volatile components of hyssop essential oil. They contribute a warm, camphoraceous-minty note to absinthe's coloring phase. These compounds are pharmacologically significant due to their neurotoxic potential at high doses.
+                    </p>
+
+                    <div class="interaction-category">
+                        <h5>Neurotoxicity &amp; GABAergic Effects</h5>
+                        <ul>
+                            <li>Acts as a GABA-A receptor antagonist, similar in mechanism to thujone but with differing potency.</li>
+                            <li>Can induce tonic-clonic seizures in animal models at doses &ge;0.13 g/kg (oral).</li>
+                            <li>The convulsant mechanism involves blockade of the GABA-A chloride channel, resulting in CNS disinhibition.</li>
+                            <li>Isopinocamphone is generally considered slightly less neurotoxic than pinocamphone.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Antimicrobial Activity</h5>
+                        <ul>
+                            <li>Moderate bactericidal activity against respiratory pathogens including <em>Streptococcus pneumoniae</em>.</li>
+                            <li>Antiviral activity reported against certain enveloped viruses (HSV-1) in vitro.</li>
+                            <li>Mechanism involves membrane disruption and interference with viral envelope proteins.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Respiratory Effects</h5>
+                        <ul>
+                            <li>Mild expectorant properties due to stimulation of bronchial serous secretion.</li>
+                            <li>Traditional use of hyssop tea for coughs and bronchitis attributed partly to pinocamphone content.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li><strong>Hyssop essential oil is classified as potentially neurotoxic</strong>; EU limits restrict pinocamphone + isopinocamphone content in hyssop oil used in food/beverages.</li>
+                            <li>Hyssop should not be used in essential oil form during pregnancy or by individuals with epilepsy.</li>
+                            <li>In traditional absinthe, the coloring step uses whole herb (not concentrated oil), and distillation may reduce ketone content; actual exposure is low.</li>
+                            <li>Epileptogenic potential: contraindicated in patients with seizure disorders.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== ROSMARINIC ACID ==================== -->
+                <div class="compound-detail" id="rosmarinic-acid">
+                    <h3>Rosmarinic Acid</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8328;H&#8321;&#8326;O&#8328;</div>
+                        <div class="chem-prop"><strong>MW:</strong> 360.31 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Polyphenol (ester of caffeic acid &amp; 3,4-dihydroxyphenyllactic acid)</div>
+                        <div class="chem-prop"><strong>Source(s):</strong> Hyssop, Lemon balm</div>
+                    </div>
+
+                    <p>
+                        Rosmarinic acid is a water-soluble polyphenol widespread in the Lamiaceae (mint) family. It is one of the most potent natural antioxidants and has been extensively studied for anti-inflammatory, neuroprotective, and anxiolytic properties. In absinthe, it is extracted during the coloring maceration step from hyssop and lemon balm.
+                    </p>
+
+                    <div class="interaction-category">
+                        <h5>Antioxidant Mechanisms</h5>
+                        <ul>
+                            <li><strong>Direct radical scavenging:</strong> The two catechol (ortho-dihydroxyphenyl) moieties donate hydrogen atoms to neutralize free radicals (superoxide, hydroxyl, peroxyl).</li>
+                            <li><strong>Metal chelation:</strong> Chelates Fe<sup>2+</sup> and Cu<sup>2+</sup> ions, preventing Fenton reaction-mediated hydroxyl radical generation.</li>
+                            <li><strong>Nrf2 pathway activation:</strong> Upregulates nuclear factor erythroid 2-related factor 2 (Nrf2), increasing transcription of antioxidant enzymes: heme oxygenase-1 (HO-1), NAD(P)H quinone oxidoreductase 1 (NQO1), glutathione S-transferase (GST).</li>
+                            <li><strong>Lipid peroxidation inhibition:</strong> Protects cell membrane polyunsaturated fatty acids from oxidative degradation.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Anti-inflammatory Activity</h5>
+                        <ul>
+                            <li>Inhibits complement C3 convertase activation, reducing complement-mediated inflammation.</li>
+                            <li>Suppresses COX-2 expression and PGE<sub>2</sub> production in stimulated macrophages.</li>
+                            <li>Inhibits 5-LOX, reducing leukotriene biosynthesis (synergistic with chamazulene).</li>
+                            <li>Downregulates TNF-&alpha;, IL-6, and IL-1&beta; via NF-&kappa;B and MAPK pathway modulation.</li>
+                            <li>Antiallergic: inhibits IgE-mediated histamine release from mast cells and basophils.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Neuroprotective Effects</h5>
+                        <ul>
+                            <li>Crosses the blood-brain barrier; detectable in brain tissue after oral administration.</li>
+                            <li>Protects neurons from amyloid-&beta; (A&beta;)-induced toxicity&mdash;relevant to Alzheimer's disease pathology.</li>
+                            <li>Inhibits acetylcholinesterase (AChE), potentially enhancing cholinergic transmission.</li>
+                            <li>Reduces neuroinflammation by suppressing microglial activation (iNOS, COX-2 inhibition).</li>
+                            <li>Protects dopaminergic neurons against 6-OHDA and MPTP-induced toxicity in Parkinson's models.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Anxiolytic &amp; Sedative Properties</h5>
+                        <ul>
+                            <li>Lemon balm's traditional calming use is attributed in part to rosmarinic acid.</li>
+                            <li>Increases GABA levels in the brain by inhibiting GABA transaminase (GABA-T), the enzyme that degrades GABA.</li>
+                            <li>Modulates the hypothalamic-pituitary-adrenal (HPA) axis, reducing cortisol output under stress.</li>
+                            <li>Clinical trials with lemon balm extract (standardized to rosmarinic acid) show reduced anxiety and improved sleep quality.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Antiviral Activity</h5>
+                        <ul>
+                            <li>Inhibits herpes simplex virus (HSV-1, HSV-2) entry by binding to viral coat proteins.</li>
+                            <li>Active against influenza A virus by inhibiting neuraminidase.</li>
+                            <li>Shows activity against SARS-CoV-2 main protease (M<sup>pro</sup>) in computational and in vitro studies.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>Excellent safety profile; no adverse effects reported at doses up to 500 mg/day in clinical studies.</li>
+                            <li>Bioavailability is moderate; enhanced by formulation with lipids or piperine.</li>
+                            <li>Not volatile&mdash;extracted during maceration, not distillation. Present in traditionally colored absinthes but absent from clear ("blanche") styles.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== LINALOOL ==================== -->
+                <div class="compound-detail" id="linalool">
+                    <h3>Linalool</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8320;H&#8321;&#8328;O</div>
+                        <div class="chem-prop"><strong>MW:</strong> 154.25 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Monoterpene alcohol (acyclic, tertiary)</div>
+                        <div class="chem-prop"><strong>IUPAC:</strong> 3,7-Dimethylocta-1,6-dien-3-ol</div>
+                        <div class="chem-prop"><strong>Source(s):</strong> Green anise, Hyssop, Lemon balm</div>
+                    </div>
+
+                    <p>
+                        Linalool is a ubiquitous monoterpene alcohol with a floral, lavender-like aroma. It is present as a minor volatile in several absinthe botanicals and contributes to the spirit's aromatic complexity. Linalool is extensively studied for its anxiolytic, anti-inflammatory, and local anesthetic properties.
+                    </p>
+                    <div class="dose-note">
+                        <strong>Existing compound page:</strong> <a href="compounds/linalool.html">View full linalool profile &rarr;</a>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Anxiolytic &amp; Sedative Effects</h5>
+                        <ul>
+                            <li>Activates GABAergic neurotransmission; enhances GABA-A receptor function as a positive allosteric modulator.</li>
+                            <li>Reduces anxiety-related behaviors in elevated plus maze and open field tests (animal models).</li>
+                            <li>Inhalation of linalool vapor reduces stress markers (serum corticosterone, adrenal weight) in rodents.</li>
+                            <li>Human clinical trials show reduced anxiety scores (STAI) after lavender oil inhalation (linalool is the primary component).</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Anti-inflammatory &amp; Analgesic</h5>
+                        <ul>
+                            <li>Inhibits edema formation in carrageenan-induced paw edema models.</li>
+                            <li>Reduces TNF-&alpha; and IL-6 production in LPS-stimulated macrophages.</li>
+                            <li>Antinociceptive effects mediated partly through opioidergic and cholinergic pathways.</li>
+                            <li>Local anesthetic activity via voltage-gated sodium channel blockade (similar mechanism to lidocaine).</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Glutamatergic System</h5>
+                        <ul>
+                            <li>Reduces glutamate release from cortical synaptosomes.</li>
+                            <li>Inhibits NMDA receptor-mediated responses, contributing to neuroprotective and anticonvulsant effects.</li>
+                            <li>This glutamate-reducing activity complements its GABA-enhancing effects, providing a dual mechanism for anxiolysis and sedation.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Antimicrobial Activity</h5>
+                        <ul>
+                            <li>Disrupts bacterial cell membranes; active against <em>S. aureus</em>, <em>E. coli</em>, and <em>P. aeruginosa</em>.</li>
+                            <li>Antifungal against <em>Candida albicans</em>&mdash;inhibits biofilm formation.</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>GRAS status; widely used in food, cosmetics, and aromatherapy.</li>
+                            <li>Generally well tolerated; rare allergic contact dermatitis from oxidized linalool (linalool hydroperoxides).</li>
+                            <li>Present in trace amounts in absinthe; primary exposure is through other dietary and cosmetic sources.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+                <!-- ==================== MYRCENE ==================== -->
+                <div class="compound-detail" id="myrcene">
+                    <h3>Myrcene (&beta;-Myrcene)</h3>
+                    <div class="chem-props">
+                        <div class="chem-prop"><strong>Formula:</strong> C&#8321;&#8320;H&#8321;&#8326;</div>
+                        <div class="chem-prop"><strong>MW:</strong> 136.23 g/mol</div>
+                        <div class="chem-prop"><strong>Class:</strong> Monoterpene (acyclic)</div>
+                        <div class="chem-prop"><strong>IUPAC:</strong> 7-Methyl-3-methyleneocta-1,6-diene</div>
+                        <div class="chem-prop"><strong>Source(s):</strong> Grand wormwood, Florence fennel, Lemon balm</div>
+                    </div>
+
+                    <p>
+                        Myrcene is one of the most common monoterpenes in nature, contributing an earthy, musky, herbal aroma. In absinthe, it is present as a minor but ubiquitous component from multiple botanical sources. Myrcene is notable for its analgesic, anti-inflammatory, and sedative properties.
+                    </p>
+                    <div class="dose-note">
+                        <strong>Existing compound page:</strong> <a href="compounds/myrcene.html">View full myrcene profile &rarr;</a>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Analgesic Activity</h5>
+                        <ul>
+                            <li>Produces analgesia in animal pain models comparable to moderate doses of aspirin.</li>
+                            <li>Mechanism involves stimulation of endogenous opioid release and interaction with &alpha;<sub>2</sub>-adrenergic receptors.</li>
+                            <li>Peripheral analgesic activity: reduces PGE<sub>2</sub> sensitization of nociceptors.</li>
+                            <li>The analgesic effect is antagonized by naloxone, confirming opioidergic involvement.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Anti-inflammatory Effects</h5>
+                        <ul>
+                            <li>Inhibits LPS-induced NO production and iNOS expression in macrophages.</li>
+                            <li>Reduces carrageenan-induced paw edema and pleurisy in rodent models.</li>
+                            <li>Inhibits prostaglandin synthesis via COX-2 downregulation.</li>
+                            <li>May modulate inflammatory cell migration via chemokine receptor interaction.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Muscle Relaxant &amp; Sedative</h5>
+                        <ul>
+                            <li>Enhances barbiturate-induced sleeping time in animal models, suggesting CNS depressant activity.</li>
+                            <li>Muscle relaxant effects mediated in part through GABA-A receptor modulation.</li>
+                            <li>Traditional "couch lock" sedative reputation (in cannabis context) may be partly attributed to myrcene.</li>
+                        </ul>
+                    </div>
+
+                    <div class="interaction-category">
+                        <h5>Gastric Cytoprotection</h5>
+                        <ul>
+                            <li>Protects against ethanol- and NSAID-induced gastric ulcers in animal models.</li>
+                            <li>Increases gastric mucus production and enhances mucosal blood flow.</li>
+                            <li>Stimulates prostaglandin synthesis in gastric mucosa (protective PGE<sub>2</sub>).</li>
+                        </ul>
+                    </div>
+
+                    <div class="safety-box">
+                        <h5>Safety &amp; Dose Context</h5>
+                        <ul>
+                            <li>GRAS status for food use; widespread in hops, lemongrass, mangoes, and many other foods.</li>
+                            <li>NTP study found equivocal evidence of carcinogenicity in male rats at very high gavage doses (250&ndash;1000 mg/kg/day); not considered a human carcinogen at dietary levels.</li>
+                            <li>Low concentrations in absinthe; primary dietary exposure from other food sources.</li>
+                        </ul>
+                    </div>
+                    <a href="#toc" class="back-toc">&uarr; Back to Table of Contents</a>
+                </div>
+
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- ============================================================ -->
+            <!-- SECTION IV: REFERENCES                                       -->
+            <!-- ============================================================ -->
+            <section class="references" id="references">
+                <h3>IV. References</h3>
+                <ol>
+                    <li>Lachenmeier, D. W., et al. (2006). Thujone&mdash;Cause of absinthism? <em>Forensic Science International</em>, 158(1), 1&ndash;8.</li>
+                    <li>H&ouml;ld, K. M., et al. (2000). &alpha;-Thujone (the active component of absinthe): &gamma;-Aminobutyric acid type A receptor modulation and metabolic detoxification. <em>Proceedings of the National Academy of Sciences</em>, 97(8), 3826&ndash;3831.</li>
+                    <li>Lachenmeier, D. W., &amp; Walch, S. G. (2008). The role of thujone in the assessment of absinthe risks. <em>Deutsche Lebensmittel-Rundschau</em>, 104, 573&ndash;578.</li>
+                    <li>Bora, K. S., &amp; Sharma, A. (2011). The genus <em>Artemisia</em>: A comprehensive review. <em>Pharmaceutical Biology</em>, 49(1), 101&ndash;109.</li>
+                    <li>Krebs, S., et al. (2010). <em>Artemisia absinthium</em> L.&mdash;phytochemistry and pharmacology. <em>Journal of Ethnopharmacology</em>, 131(1), 1&ndash;27.</li>
+                    <li>Petersen, M., &amp; Simmonds, M. S. J. (2003). Rosmarinic acid. <em>Phytochemistry</em>, 62(2), 121&ndash;125.</li>
+                    <li>Aazza, S., et al. (2014). Antioxidant, anti-inflammatory and anti-proliferative activities of Moroccan commercial essential oils. <em>Natural Product Communications</em>, 9(4), 587&ndash;594.</li>
+                    <li>Regnault-Roger, C. (1997). The potential of botanical essential oils for insect pest control. <em>Integrated Pest Management Reviews</em>, 2(1), 25&ndash;34.</li>
+                    <li>Trabace, L., et al. (2011). Estragole: DNA adducts and mechanism of action. <em>Food and Chemical Toxicology</em>, 49(7), 1435&ndash;1445.</li>
+                    <li>Elisabetsky, E., et al. (1995). Anticonvulsant properties of linalool in glutamate-related seizure models. <em>Phytomedicine</em>, 6(2), 107&ndash;113.</li>
+                    <li>Rao, V. S., et al. (1990). Effect of myrcene on nociception in mice. <em>Journal of Pharmacy and Pharmacology</em>, 42(12), 877&ndash;878.</li>
+                    <li>Sabogal-Gu&aacute;queta, A. M., et al. (2015). The flavonoid quercetin reverses astrocyte-mediated neurotoxicity. <em>Molecular Neurobiology</em>, 51(2), 466&ndash;479.</li>
+                    <li>European Food Safety Authority (EFSA). (2012). Compendium of botanicals reported to contain naturally occurring substances of possible concern for human health. <em>EFSA Journal</em>, 10(5), 2663.</li>
+                    <li>Meschler, J. P., &amp; Howlett, A. C. (1999). Thujone exhibits low affinity for cannabinoid receptors but fails to evoke cannabimimetic responses. <em>Pharmacology Biochemistry and Behavior</em>, 62(3), 473&ndash;480.</li>
+                    <li>Adams, T. B., et al. (2008). The FEMA GRAS assessment of trans-anethole used as a flavoring substance. <em>Food and Chemical Toxicology</em>, 46(Suppl 9), S27&ndash;S35.</li>
+                </ol>
+            </section>
+
+            <div class="navigation-links">
+                <a href="index.html">&larr; Back to Home</a>
+                <a href="compounds.html">View All Compounds &rarr;</a>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Terpedia. Scientific repository for functional flavors research.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top button -->
+    <a href="#top" class="back-to-top" id="backToTop" title="Back to top">&uarr;</a>
+
+    <script>
+        // Back to top visibility
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    history.pushState(null, null, this.getAttribute('href'));
+                }
+            });
+        });
+    </script>
+
+    <script src="chat-widget.js"></script>
+</body>
+</html>

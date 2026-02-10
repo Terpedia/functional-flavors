@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCMS Certificate of Analysis - Absinthe (Traditional Verte) | Terpedia</title>
+    <meta name="description" content="GC-MS Certificate of Analysis for a traditional verte absinthe, with volatile compound identification, retention times, concentrations, and regulatory compliance notes.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="coa-styles.css">
+    <link rel="stylesheet" href="chat-widget.css">
+    <style>
+        /* Absinthe COA extras */
+        .coa-header {
+            border-bottom-color: #2c5f3f;
+        }
+        .coa-regulatory {
+            margin-bottom: 2rem;
+            padding: 1rem 1.25rem;
+            background-color: #fff3f3;
+            border-left: 4px solid #e74c3c;
+            border-radius: 0 4px 4px 0;
+        }
+        .coa-regulatory h3 {
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            color: #c0392b;
+            font-size: 1.1rem;
+        }
+        .coa-regulatory table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            margin-top: 0.75rem;
+        }
+        .coa-regulatory table th {
+            background-color: #c0392b;
+            color: #fff;
+            padding: 0.5rem 0.6rem;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #a93226;
+            font-size: 0.82rem;
+        }
+        .coa-regulatory table td {
+            padding: 0.5rem 0.6rem;
+            border: 1px solid #e0e0e0;
+            font-size: 0.85rem;
+        }
+        .coa-regulatory table tbody tr:nth-child(even) {
+            background-color: #fdf2f2;
+        }
+        .coa-regulatory .status-pass {
+            color: #27ae60;
+            font-weight: 700;
+        }
+        .coa-regulatory .status-fail {
+            color: #e74c3c;
+            font-weight: 700;
+        }
+
+        .coa-herb-source {
+            margin-bottom: 2rem;
+            padding: 1rem 1.25rem;
+            background-color: #e8f8ef;
+            border-left: 4px solid #27ae60;
+            border-radius: 0 4px 4px 0;
+        }
+        .coa-herb-source h3 {
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            color: #1a7a42;
+            font-size: 1.1rem;
+        }
+        .coa-herb-source table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+        .coa-herb-source table th {
+            background-color: #1a7a42;
+            color: #fff;
+            padding: 0.5rem 0.6rem;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #146333;
+            font-size: 0.82rem;
+        }
+        .coa-herb-source table td {
+            padding: 0.5rem 0.6rem;
+            border: 1px solid #e0e0e0;
+            font-size: 0.85rem;
+        }
+        .coa-herb-source table tbody tr:nth-child(even) {
+            background-color: #f0faf4;
+        }
+        .coa-herb-source table tbody tr:hover {
+            background-color: #d5f0e0;
+        }
+        .coa-herb-source .herb-botanical {
+            font-style: italic;
+            color: #555;
+        }
+
+        .coa-lcms-note {
+            margin-bottom: 2rem;
+            padding: 1rem 1.25rem;
+            background-color: #eef3fc;
+            border-left: 4px solid #2c5f8f;
+            border-radius: 0 4px 4px 0;
+        }
+        .coa-lcms-note h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: #2c5f8f;
+            font-size: 1.05rem;
+        }
+        .coa-lcms-note p {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .coa-lcms-note table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+        }
+        .coa-lcms-note table th {
+            background-color: #2c5f8f;
+            color: #fff;
+            padding: 0.5rem 0.6rem;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #1e4266;
+            font-size: 0.8rem;
+        }
+        .coa-lcms-note table td {
+            padding: 0.5rem 0.6rem;
+            border: 1px solid #e0e0e0;
+        }
+        .coa-lcms-note table tbody tr:nth-child(even) {
+            background-color: #f4f7fc;
+        }
+
+        .peak-dominant { font-weight: 700; color: #2c3e50; }
+        .peak-major { font-weight: 600; color: #34495e; }
+        .peak-minor { color: #555; }
+        .peak-trace { color: #999; font-style: italic; }
+        .thujone-highlight {
+            background-color: #fff8e1 !important;
+        }
+
+        @media print {
+            .coa-regulatory, .coa-herb-source, .coa-lcms-note {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Terpedia</h1>
+            <p class="subtitle">Scientific Repository for Functional Flavors Research</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="cinnamon-roll-tabs.html">Cinnamon Roll</a></li>
+                <li><a href="absinthe.html">Absinthe</a></li>
+                <li><a href="compounds.html">All Compounds</a></li>
+                <li><a href="go-to-market.html">Go-to-Market</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="coa-document">
+
+            <!-- CoA Header -->
+            <div class="coa-header">
+                <div class="coa-logo">
+                    <h2>TERPEDIA</h2>
+                    <p>Analytical Laboratory</p>
+                </div>
+                <div class="coa-title">
+                    <h1>CERTIFICATE OF ANALYSIS</h1>
+                    <p class="coa-subtitle">Gas Chromatography&ndash;Mass Spectrometry (GC-MS)</p>
+                </div>
+            </div>
+
+            <!-- Certificate Information -->
+            <div class="coa-info">
+                <table class="info-table">
+                    <tr>
+                        <td><strong>Certificate No.:</strong></td>
+                        <td>TP-2026-ABS-001</td>
+                        <td><strong>Date:</strong></td>
+                        <td id="current-date"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sample Name:</strong></td>
+                        <td>Traditional Absinthe Verte</td>
+                        <td><strong>Sample Type:</strong></td>
+                        <td>Distilled Spirit (68% ABV)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Method:</strong></td>
+                        <td>HS-SPME / GC-MS (Shimadzu GCMS-QP2020 NX)</td>
+                        <td><strong>Column:</strong></td>
+                        <td>DB-5MS (30 m &times; 0.25 mm &times; 0.25 &mu;m)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Injection Temp:</strong></td>
+                        <td>250 &deg;C</td>
+                        <td><strong>Detector:</strong></td>
+                        <td>Quadrupole Mass Spectrometer (EI, 70 eV)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Carrier Gas:</strong></td>
+                        <td>Helium (99.999%)</td>
+                        <td><strong>Flow Rate:</strong></td>
+                        <td>1.0 mL/min (constant flow)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Oven Program:</strong></td>
+                        <td>40 &deg;C (3 min) &rarr; 4 &deg;C/min &rarr; 180 &deg;C &rarr; 10 &deg;C/min &rarr; 280 &deg;C (5 min)</td>
+                        <td><strong>SPME Fiber:</strong></td>
+                        <td>DVB/CAR/PDMS 50/30 &mu;m, 45 min @ 50 &deg;C</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Scan Range:</strong></td>
+                        <td>35&ndash;550 m/z</td>
+                        <td><strong>Library:</strong></td>
+                        <td>NIST 23 / Wiley 12th Ed.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Sample Description -->
+            <div class="coa-sample-desc">
+                <h3>Sample Description</h3>
+                <p>
+                    Analysis of volatile and semi-volatile organic compounds in a traditional Swiss-style absinthe verte (green absinthe), distilled from a maceration of grand wormwood (<em>Artemisia absinthium</em>), green anise (<em>Pimpinella anisum</em>), and Florence fennel (<em>Foeniculum vulgare</em>), with post-distillation coloring by petit wormwood (<em>Artemisia pontica</em>), hyssop (<em>Hyssopus officinalis</em>), and lemon balm (<em>Melissa officinalis</em>). Volatile fraction extracted by headspace solid-phase microextraction (HS-SPME) and analyzed by GC-MS. Compounds identified through NIST/Wiley mass spectral library matching and retention index (RI) comparison with published Kov&aacute;ts indices. Quantitation by internal standard method (4-fluoroanisole, 10 &mu;g/mL).
+                </p>
+            </div>
+
+            <!-- Botanical Source Table -->
+            <div class="coa-herb-source">
+                <h3>Botanical Source Attribution</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Herb</th>
+                            <th>Botanical Name</th>
+                            <th>Role</th>
+                            <th>Key Marker Compounds (GC-MS)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Grand Wormwood</strong></td>
+                            <td class="herb-botanical">Artemisia absinthium L.</td>
+                            <td>Distillation</td>
+                            <td>&alpha;-Thujone, &beta;-Thujone, <em>trans</em>-Sabinyl acetate, Myrcene</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Green Anise</strong></td>
+                            <td class="herb-botanical">Pimpinella anisum L.</td>
+                            <td>Distillation</td>
+                            <td><em>trans</em>-Anethole, Estragole, &gamma;-Himachalene</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Florence Fennel</strong></td>
+                            <td class="herb-botanical">Foeniculum vulgare Mill.</td>
+                            <td>Distillation</td>
+                            <td><em>trans</em>-Anethole, Fenchone, Estragole, Limonene</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Petit Wormwood</strong></td>
+                            <td class="herb-botanical">Artemisia pontica L.</td>
+                            <td>Coloring</td>
+                            <td>&beta;-Thujone (trace), 1,8-Cineole</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hyssop</strong></td>
+                            <td class="herb-botanical">Hyssopus officinalis L.</td>
+                            <td>Coloring</td>
+                            <td>Pinocamphone, Isopinocamphone, &beta;-Pinene</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lemon Balm</strong></td>
+                            <td class="herb-botanical">Melissa officinalis L.</td>
+                            <td>Coloring</td>
+                            <td>Citronellal, Geranial, Neral, Linalool</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.82rem; color:#555; margin-top:0.75rem; margin-bottom:0;">
+                    <strong>Attribution method:</strong> Marker compound assignment based on comparison with individual botanical essential oil GC-MS profiles (in-house reference library) and published Kov&aacute;ts RI data. Where a compound is present in multiple botanicals (e.g., <em>trans</em>-anethole in both anise and fennel), attribution is listed as shared.
+                </p>
+            </div>
+
+            <!-- GC-MS Results Table -->
+            <div class="coa-results">
+                <h3>Identified Volatile Compounds</h3>
+                <div style="overflow-x:auto;">
+                <table class="coa-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Compound</th>
+                            <th>CAS No.</th>
+                            <th>RT (min)</th>
+                            <th>RI (calc)</th>
+                            <th>Area %</th>
+                            <th>Conc. (mg/L)</th>
+                            <th>Match %</th>
+                            <th>Source Herb(s)</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td class="peak-minor">&alpha;-Pinene</td>
+                            <td>80-56-8</td>
+                            <td>5.92</td>
+                            <td>932</td>
+                            <td>0.4</td>
+                            <td>4.8</td>
+                            <td>94.1</td>
+                            <td>Fennel, Hyssop</td>
+                            <td><a href="compounds/pinene.html" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td class="peak-minor">&beta;-Pinene</td>
+                            <td>127-91-3</td>
+                            <td>6.48</td>
+                            <td>974</td>
+                            <td>0.6</td>
+                            <td>7.2</td>
+                            <td>93.8</td>
+                            <td>Hyssop, Fennel</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td class="peak-minor">&beta;-Myrcene</td>
+                            <td>123-35-3</td>
+                            <td>6.71</td>
+                            <td>988</td>
+                            <td>0.3</td>
+                            <td>3.6</td>
+                            <td>92.4</td>
+                            <td>Wormwood, Fennel</td>
+                            <td><a href="compounds/myrcene.html" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td class="peak-minor"><em>p</em>-Cymene</td>
+                            <td>99-87-6</td>
+                            <td>7.34</td>
+                            <td>1022</td>
+                            <td>0.2</td>
+                            <td>2.4</td>
+                            <td>91.7</td>
+                            <td>Wormwood, Fennel</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td class="peak-minor">Limonene</td>
+                            <td>138-86-3</td>
+                            <td>7.52</td>
+                            <td>1029</td>
+                            <td>0.5</td>
+                            <td>6.0</td>
+                            <td>95.3</td>
+                            <td>Fennel</td>
+                            <td><a href="compounds/limonene.html" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td class="peak-minor">1,8-Cineole (Eucalyptol)</td>
+                            <td>470-82-6</td>
+                            <td>7.78</td>
+                            <td>1031</td>
+                            <td>0.4</td>
+                            <td>4.8</td>
+                            <td>96.2</td>
+                            <td>Petit wormwood</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td class="peak-minor">&gamma;-Terpinene</td>
+                            <td>99-85-4</td>
+                            <td>8.15</td>
+                            <td>1054</td>
+                            <td>0.2</td>
+                            <td>2.4</td>
+                            <td>90.3</td>
+                            <td>Fennel</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td class="peak-minor">Linalool</td>
+                            <td>78-70-6</td>
+                            <td>9.23</td>
+                            <td>1096</td>
+                            <td>0.8</td>
+                            <td>9.6</td>
+                            <td>97.1</td>
+                            <td>Anise, Hyssop, Melissa</td>
+                            <td><a href="compounds/linalool.html" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr class="thujone-highlight">
+                            <td>9</td>
+                            <td class="peak-minor"><strong>&alpha;-Thujone</strong></td>
+                            <td>546-80-5</td>
+                            <td>9.61</td>
+                            <td>1102</td>
+                            <td>1.2</td>
+                            <td>14.4</td>
+                            <td>97.8</td>
+                            <td>Grand wormwood</td>
+                            <td><a href="absinthe.html#thujone" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr class="thujone-highlight">
+                            <td>10</td>
+                            <td class="peak-minor"><strong>&beta;-Thujone</strong></td>
+                            <td>471-15-8</td>
+                            <td>9.84</td>
+                            <td>1114</td>
+                            <td>0.6</td>
+                            <td>7.2</td>
+                            <td>96.5</td>
+                            <td>Grand wormwood, Petit wormwood</td>
+                            <td><a href="absinthe.html#thujone" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td class="peak-minor">Camphor</td>
+                            <td>76-22-2</td>
+                            <td>10.12</td>
+                            <td>1146</td>
+                            <td>0.3</td>
+                            <td>3.6</td>
+                            <td>95.7</td>
+                            <td>Wormwood</td>
+                            <td><a href="compounds/camphor.html" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td class="peak-major"><strong>Fenchone</strong></td>
+                            <td>1195-79-5</td>
+                            <td>10.45</td>
+                            <td>1083</td>
+                            <td>8.7</td>
+                            <td>104.4</td>
+                            <td>98.3</td>
+                            <td>Florence fennel</td>
+                            <td><a href="absinthe.html#fenchone" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td class="peak-minor">Pinocamphone</td>
+                            <td>547-60-4</td>
+                            <td>11.18</td>
+                            <td>1162</td>
+                            <td>0.5</td>
+                            <td>6.0</td>
+                            <td>93.2</td>
+                            <td>Hyssop</td>
+                            <td><a href="absinthe.html#pinocamphone" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td class="peak-minor">Isopinocamphone</td>
+                            <td>1882-26-4</td>
+                            <td>11.47</td>
+                            <td>1175</td>
+                            <td>0.4</td>
+                            <td>4.8</td>
+                            <td>91.8</td>
+                            <td>Hyssop</td>
+                            <td><a href="absinthe.html#pinocamphone" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td class="peak-minor">Citronellal</td>
+                            <td>106-23-0</td>
+                            <td>11.82</td>
+                            <td>1148</td>
+                            <td>0.2</td>
+                            <td>2.4</td>
+                            <td>90.1</td>
+                            <td>Lemon balm</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td class="peak-minor">Estragole (Methyl Chavicol)</td>
+                            <td>140-67-0</td>
+                            <td>12.34</td>
+                            <td>1196</td>
+                            <td>2.1</td>
+                            <td>25.2</td>
+                            <td>96.9</td>
+                            <td>Anise, Fennel</td>
+                            <td><a href="absinthe.html#estragole" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>17</td>
+                            <td class="peak-trace"><em>cis</em>-Anethole</td>
+                            <td>25679-28-1</td>
+                            <td>14.56</td>
+                            <td>1248</td>
+                            <td>0.3</td>
+                            <td>3.6</td>
+                            <td>89.4</td>
+                            <td>Anise, Fennel</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>18</td>
+                            <td class="peak-minor">Anisaldehyde (<em>p</em>-Methoxybenzaldehyde)</td>
+                            <td>123-11-5</td>
+                            <td>14.92</td>
+                            <td>1250</td>
+                            <td>0.8</td>
+                            <td>9.6</td>
+                            <td>94.6</td>
+                            <td>Anise (oxidation product)</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>19</td>
+                            <td class="peak-dominant"><strong><em>trans</em>-Anethole</strong></td>
+                            <td>4180-23-8</td>
+                            <td>15.38</td>
+                            <td>1282</td>
+                            <td>72.4</td>
+                            <td>868.8</td>
+                            <td>99.2</td>
+                            <td>Anise, Fennel</td>
+                            <td><a href="absinthe.html#anethole" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr>
+                            <td>20</td>
+                            <td class="peak-trace">Geranial (<em>trans</em>-Citral)</td>
+                            <td>141-27-5</td>
+                            <td>16.05</td>
+                            <td>1267</td>
+                            <td>0.1</td>
+                            <td>1.2</td>
+                            <td>88.7</td>
+                            <td>Lemon balm</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>21</td>
+                            <td class="peak-trace">Neral (<em>cis</em>-Citral)</td>
+                            <td>106-26-3</td>
+                            <td>16.28</td>
+                            <td>1238</td>
+                            <td>0.1</td>
+                            <td>1.2</td>
+                            <td>87.9</td>
+                            <td>Lemon balm</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>22</td>
+                            <td class="peak-minor"><em>trans</em>-Sabinyl acetate</td>
+                            <td>3536-54-7</td>
+                            <td>16.67</td>
+                            <td>1290</td>
+                            <td>0.6</td>
+                            <td>7.2</td>
+                            <td>90.8</td>
+                            <td>Grand wormwood</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>23</td>
+                            <td class="peak-trace">Methyleugenol</td>
+                            <td>93-15-2</td>
+                            <td>17.23</td>
+                            <td>1403</td>
+                            <td>0.1</td>
+                            <td>1.2</td>
+                            <td>88.3</td>
+                            <td>Anise</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>24</td>
+                            <td class="peak-trace">&beta;-Caryophyllene</td>
+                            <td>87-44-5</td>
+                            <td>18.56</td>
+                            <td>1419</td>
+                            <td>0.2</td>
+                            <td>2.4</td>
+                            <td>91.5</td>
+                            <td>Wormwood, Melissa</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>25</td>
+                            <td class="peak-trace">&gamma;-Himachalene</td>
+                            <td>53111-25-4</td>
+                            <td>19.14</td>
+                            <td>1484</td>
+                            <td>0.1</td>
+                            <td>1.2</td>
+                            <td>87.2</td>
+                            <td>Anise</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>26</td>
+                            <td class="peak-trace">Spathulenol</td>
+                            <td>6750-60-3</td>
+                            <td>20.45</td>
+                            <td>1578</td>
+                            <td>0.1</td>
+                            <td>1.2</td>
+                            <td>86.4</td>
+                            <td>Wormwood</td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>27</td>
+                            <td class="peak-trace">Chamazulene</td>
+                            <td>529-05-5</td>
+                            <td>22.34</td>
+                            <td>1731</td>
+                            <td>trace</td>
+                            <td>&lt;LOQ</td>
+                            <td>85.1</td>
+                            <td>Wormwood</td>
+                            <td><a href="absinthe.html#chamazulene" class="coa-link">View &rarr;</a></td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="5"><strong>Total Identified</strong></td>
+                            <td><strong>91.2</strong></td>
+                            <td><strong>1105.2</strong></td>
+                            <td colspan="3"><em>Unidentified peaks: 8.8% (below 85% match or &lt;0.05% area)</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                <p style="font-size:0.82rem; color:#555; margin-top:0.5rem;">
+                    <strong>Peak classification:</strong>
+                    <strong style="color:#2c3e50;">Dominant</strong> (&gt;50%) &bull;
+                    <strong style="color:#34495e;">Major</strong> (5&ndash;50%) &bull;
+                    <span style="color:#555;">Minor</span> (0.2&ndash;5%) &bull;
+                    <span style="color:#999; font-style:italic;">Trace</span> (&lt;0.2% or &lt;LOQ).
+                    RI = Kov&aacute;ts retention index (calculated vs. C7&ndash;C30 n-alkane standards). Conc. = concentration in mg/L of finished spirit.
+                </p>
+            </div>
+
+            <!-- Regulatory Compliance -->
+            <div class="coa-regulatory">
+                <h3>Regulatory Compliance &mdash; Thujone</h3>
+                <p style="font-size:0.9rem; margin-bottom:0.5rem;">
+                    Combined &alpha;-thujone + &beta;-thujone = <strong>21.6 mg/L</strong> (equivalent to ~21.6 mg/kg at spirit density &approx;0.88 g/mL).
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jurisdiction</th>
+                            <th>Regulation</th>
+                            <th>Limit</th>
+                            <th>This Sample</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>European Union</td>
+                            <td>Reg. (EC) No 1334/2008, Annex III</td>
+                            <td>&le;35 mg/kg (in beverages &gt;25% ABV with <em>Artemisia</em>)</td>
+                            <td>21.6 mg/kg</td>
+                            <td class="status-pass">PASS</td>
+                        </tr>
+                        <tr>
+                            <td>United States</td>
+                            <td>TTB / 21 CFR &sect;172.510 (&ldquo;thujone-free&rdquo;)</td>
+                            <td>&le;10 mg/L (by TTB-validated GC method)</td>
+                            <td>21.6 mg/L</td>
+                            <td class="status-fail">FAIL</td>
+                        </tr>
+                        <tr>
+                            <td>Switzerland</td>
+                            <td>Ordonnance sur les denr&eacute;es alimentaires (OSAV)</td>
+                            <td>&le;35 mg/kg</td>
+                            <td>21.6 mg/kg</td>
+                            <td class="status-pass">PASS</td>
+                        </tr>
+                        <tr>
+                            <td>Canada</td>
+                            <td>Food and Drug Regulations, B.02.100.1</td>
+                            <td>&le;10 mg/kg</td>
+                            <td>21.6 mg/kg</td>
+                            <td class="status-fail">FAIL</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.82rem; color:#555; margin-top:0.75rem; margin-bottom:0;">
+                    <strong>Note:</strong> This sample profile represents a traditionally made European-style absinthe and is compliant with EU/Swiss regulations. For US or Canadian markets, a reformulation to reduce wormwood loading or use of low-thujone <em>A. absinthium</em> chemotypes would be required to meet &le;10 mg/L. The US &ldquo;thujone-free&rdquo; designation does not mean zero thujone; it means below the detection limit of the TTB method (~10 mg/L).
+                </p>
+            </div>
+
+            <!-- LC-MS Supplement Note -->
+            <div class="coa-lcms-note">
+                <h3>Compounds Not Detected by GC-MS &mdash; LC-MS Supplement Recommended</h3>
+                <p>
+                    Several pharmacologically significant compounds in absinthe's botanical blend are non-volatile or thermally labile and do not appear on a standard GC-MS volatile analysis. These require <strong>LC-MS/MS</strong> (Liquid Chromatography&ndash;Tandem Mass Spectrometry) or <strong>HPLC-DAD</strong> for detection and quantitation.
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Compound</th>
+                            <th>Class</th>
+                            <th>MW (g/mol)</th>
+                            <th>Why Not on GC-MS</th>
+                            <th>Recommended Method</th>
+                            <th>Source Herb</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong><a href="absinthe.html#absinthin">Absinthin</a></strong></td>
+                            <td>Dimeric sesquiterpene lactone</td>
+                            <td>496.64</td>
+                            <td>High MW, low volatility, thermal decomposition &gt;200 &deg;C</td>
+                            <td>LC-MS/MS (ESI+, MRM)</td>
+                            <td>Grand wormwood</td>
+                        </tr>
+                        <tr>
+                            <td><strong><a href="absinthe.html#artabsin">Artabsin</a></strong></td>
+                            <td>Sesquiterpene lactone</td>
+                            <td>248.32</td>
+                            <td>Semi-volatile; thermally degrades on GC column at standard conditions</td>
+                            <td>LC-MS/MS (ESI+) or GC-MS with cold on-column injection</td>
+                            <td>Grand wormwood</td>
+                        </tr>
+                        <tr>
+                            <td><strong><a href="absinthe.html#rosmarinic-acid">Rosmarinic Acid</a></strong></td>
+                            <td>Polyphenol (hydroxycinnamic acid ester)</td>
+                            <td>360.31</td>
+                            <td>Non-volatile, polar, water-soluble phenolic acid</td>
+                            <td>HPLC-DAD (325 nm) or LC-MS/MS (ESI&minus;)</td>
+                            <td>Hyssop, Lemon balm</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chlorogenic Acid</strong></td>
+                            <td>Polyphenol (hydroxycinnamic acid)</td>
+                            <td>354.31</td>
+                            <td>Non-volatile, polar</td>
+                            <td>HPLC-DAD (325 nm)</td>
+                            <td>Lemon balm</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Luteolin / Apigenin</strong></td>
+                            <td>Flavones</td>
+                            <td>286 / 270</td>
+                            <td>Non-volatile polyphenols</td>
+                            <td>LC-MS/MS (ESI&minus;)</td>
+                            <td>Wormwood, Melissa</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.82rem; color:#555; margin-top:0.75rem; margin-bottom:0;">
+                    These non-volatile compounds are extracted during the coloring/maceration step (not during distillation). Their presence in the finished product depends on whether the absinthe is a <em>verte</em> (colored by herb maceration) or <em>blanche/la bleue</em> (uncolored). A complete bioactive profile requires both GC-MS (volatiles) and LC-MS/HPLC (non-volatiles) analysis.
+                </p>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="coa-notes">
+                <h3>Analytical Notes</h3>
+                <ul>
+                    <li><strong>Identification:</strong> Compounds identified by NIST 23 / Wiley 12th Ed. mass spectral library matching (match threshold &ge;85%) and Kov&aacute;ts RI comparison with published literature values (&pm;5 RI units).</li>
+                    <li><strong>Quantitation:</strong> Concentrations calculated by internal standard method (4-fluoroanisole, 10 &mu;g/mL in methanol). Response factors assumed = 1.0 for all analytes; results are semi-quantitative. For regulatory thujone determination, dedicated isotope-dilution GC-MS with &alpha;-thujone-d<sub>3</sub> internal standard is recommended.</li>
+                    <li><strong>LOD / LOQ:</strong> Limit of detection ~0.1 mg/L; limit of quantitation ~0.5 mg/L under these conditions.</li>
+                    <li><strong><em>trans</em>-Anethole dominance:</strong> The 72.4% area represents the overwhelmingly dominant peak in the TIC, consistent with published GC-MS profiles of traditional absinthe (Lachenmeier et al., 2006; Emmert et al., 2004).</li>
+                    <li><strong>Thujone isomer ratio:</strong> &alpha;-Thujone : &beta;-thujone ratio of 2:1 is consistent with <em>A. absinthium</em> as the primary thujone source. Ratios &gt;3:1 may indicate adulteration with thujone-rich essential oils.</li>
+                    <li><strong>Chamazulene:</strong> Detected at trace level (&lt;LOQ). Chamazulene is formed from matricin during steam distillation but is partially lost to the distillation residue. Higher levels expected in the essential oil than in the finished spirit.</li>
+                    <li><strong>Pinocamphone/Isopinocamphone:</strong> Combined 0.9% area (10.8 mg/L) confirms hyssop inclusion in the coloring step. These bicyclic ketones are marker compounds for <em>Hyssopus officinalis</em>.</li>
+                    <li><strong>Literature basis:</strong> Retention times, concentrations, and compound profiles are modeled on published GC-MS studies of authentic absinthes (see References). This COA represents a representative analytical profile, not a specific commercial product lot.</li>
+                </ul>
+            </div>
+
+            <!-- Signature Section -->
+            <div class="coa-signature">
+                <table class="signature-table">
+                    <tr>
+                        <td class="signature-cell">
+                            <div class="signature-line"></div>
+                            <p><strong>Analyst</strong></p>
+                            <p>Dr. [Analyst Name]</p>
+                            <p>Senior Analytical Chemist</p>
+                        </td>
+                        <td class="signature-cell">
+                            <div class="signature-line"></div>
+                            <p><strong>Approved By</strong></p>
+                            <p>Dr. [Supervisor Name]</p>
+                            <p>Laboratory Director</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- References -->
+            <div class="coa-notes" style="background-color:#f8f9fa; border-left-color:#2c3e50;">
+                <h3>References &amp; Data Sources</h3>
+                <ul>
+                    <li>Lachenmeier, D. W., et al. (2006). Thujone&mdash;Cause of absinthism? <em>Forensic Science International</em>, 158(1), 1&ndash;8.</li>
+                    <li>Emmert, J., et al. (2004). Determination of &alpha;/&beta;-thujone and related terpenes in absinthe using solid phase extraction and gas chromatography. <em>Deutsche Lebensmittel-Rundschau</em>, 100, 352&ndash;356.</li>
+                    <li>Lachenmeier, D. W., et al. (2008). Absinthe&mdash;A review. <em>Critical Reviews in Food Science and Nutrition</em>, 48(2), 120&ndash;128.</li>
+                    <li>Padosch, S. A., Lachenmeier, D. W., &amp; Kr&ouml;ner, L. U. (2006). Absinthism: a fictitious 19th century syndrome with present impact. <em>Substance Abuse Treatment, Prevention, and Policy</em>, 1, 14.</li>
+                    <li>NIST WebBook &mdash; <a href="https://webbook.nist.gov/chemistry/">webbook.nist.gov/chemistry</a> &mdash; Mass spectral reference data and retention indices.</li>
+                    <li>Adams, R. P. (2017). <em>Identification of Essential Oil Components by Gas Chromatography/Mass Spectrometry</em>, 4.1 ed. Allured Publishing.</li>
+                </ul>
+            </div>
+
+            <!-- Footer -->
+            <div class="coa-footer">
+                <p><strong>Terpedia Analytical Laboratory</strong></p>
+                <p>This certificate relates only to the sample described above. Results are based on the sample as received and analyzed under the stated conditions.</p>
+                <p>Compound profile is modeled on published analytical literature for traditional absinthe verte and does not represent a specific commercial product lot.</p>
+                <p>For questions regarding this analysis: <a href="https://github.com/terpedia">github.com/terpedia</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Terpedia. Scientific repository for functional flavors research.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    </script>
+
+    <script src="chat-widget.js"></script>
+</body>
+</html>
